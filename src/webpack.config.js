@@ -9,7 +9,9 @@ module.exports = {
   mode: 'production',
   externals: {
     'react': 'React',
-    'react-dom': 'ReactDOM'
+    'react-dom': 'ReactDOM',
+    'redux': 'Redux',
+    'react-redux': 'ReactRedux'
   },
   resolve: {
     extensions: ['.tsx', '.js', '.ts']

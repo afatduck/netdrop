@@ -1,7 +1,12 @@
 <?php
 if (isset($rest, $host)) {
 
-  $ftp = ftp_connect($host);
+  if ($_SESSION['host'] != $host) {
+    $_SESSION['user'] = '';
+    $_SESSION['pword'] = '';
+  }
+
+  $ftp = ftp_connect($host, 21, 10);
   if ($ftp) {
     $_SESSION['host'] = $host;
   }
@@ -9,7 +14,7 @@ if (isset($rest, $host)) {
     $_SESSION['host'] = null;
   }
 
-  echo $_SESSION['host'] ? '' : 'Can\'t connect.';
+  echo $ftp ? '' : 'Can\'t connect.';
   die;
 
 }

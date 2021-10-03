@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-export const HostForm = (props: { update: React.Dispatch<React.SetStateAction<string>> }) => {
+import * as ActionCreators from '../actions'
+
+export const HostForm = () => {
+
+  const dispatch = useDispatch()
+  const { updateError, updateLevel } = bindActionCreators(ActionCreators, dispatch)
 
   const [input, setInput]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(globalThis.host)
 
@@ -17,7 +24,8 @@ export const HostForm = (props: { update: React.Dispatch<React.SetStateAction<st
         host: input
       },
       data => {
-        props.update(data)
+        updateError(data)
+        updateLevel(data ? '' : 'LOGIN')
       }
     )
   }

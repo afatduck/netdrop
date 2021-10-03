@@ -1,13 +1,18 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-export const LoginForm = (props: { update: React.Dispatch<React.SetStateAction<string>> }) => {
+import * as ActionCreators from '../actions'
 
-  type creds = {
-    uname: string
-    pword: string
-  }
+export const LoginForm = () => {
 
-  const [creds, setCreds]: [creds, React.Dispatch<React.SetStateAction<creds>>] = useState({ uname: '', pword: '' })
+  const dispatch = useDispatch()
+  const { updateError, updateLevel, updateCdir } = bindActionCreators(ActionCreators, dispatch)
+
+  const [creds, setCreds]: [creds, React.Dispatch<React.SetStateAction<creds>>] = useState({
+    uname: globalThis.user,
+    pword: globalThis.pword
+  })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -18,7 +23,14 @@ export const LoginForm = (props: { update: React.Dispatch<React.SetStateAction<s
         user: creds.uname,
         pword: creds.pword
       }, data => {
-        props.update(parseInt(data) ? "Succesfully logged in." : "Username or password incorrect.")
+        data = JSON.parse(data) as string | directory[]
+        if (typeof data === 'string') {
+          updateError(data)
+          return
+        }
+        updateCdir(data)
+        updateLevel('BROWSE')
+        updateError('')
       }
     )
   }
@@ -31,7 +43,7 @@ export const LoginForm = (props: { update: React.Dispatch<React.SetStateAction<s
   }
 
   return (
-    <form className="col-3 p-0" method="post" onSubmit={handleSubmit}>
+    <form className="col-3 p-0 mt-3" method="post" onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="uname_input">User:</label>
         <input type="text" autoComplete="off" className="form-control" id="uname_input" name="uname" value={creds.uname} onChange={handleChange} />

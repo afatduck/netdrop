@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { render } from 'react-dom'
+import { Provider, useSelector } from 'react-redux'
 
+import { store } from './store'
 import { ResetButton } from './comps/small'
 import { HostForm } from './comps/host'
 import { LoginForm } from './comps/login'
+import { DirList } from './comps/dirlist'
 
 const App = () => {
 
-  const [valid, setValid]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(null)
-  const [level, setLevel]: [levels, React.Dispatch<React.SetStateAction<levels>>] = useState('HOST')
-
-  useEffect(() => { if (!valid && valid != null) { setLevel('LOGIN') } }, [valid])
+  const { globals } = useSelector((state: RootState) => state)
 
   return (
     <div>
-      <HostForm update={setValid} />
-      {(() => { if (level != 'HOST') { return <LoginForm update={setValid} /> } })()}
-      <h5 className='text-info mt-3'>{valid}</h5>
+      <HostForm />
+      {(() => { if (globals.level != 'HOST') { return <LoginForm /> } })()}
+      {(() => { if (globals.level == 'BROWSE') { return <DirList /> } })()}
+      <h5 className='text-info mt-3'>{globals.error}</h5>
       <ResetButton />
     </div>
   )
@@ -24,7 +25,10 @@ const App = () => {
 
 $(document).ready(() => {
   render(
-    <App />,
+    <Provider store={store}>
+      <App />
+    </Provider>
+    ,
     $('#root')[0]
   )
 })
