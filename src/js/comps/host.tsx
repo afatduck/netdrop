@@ -9,7 +9,7 @@ export const HostForm = () => {
   const dispatch = useDispatch()
   const { updateError, updateLevel } = bindActionCreators(ActionCreators, dispatch)
 
-  const [input, setInput]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(globalThis.host)
+  const [input, setInput]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(localStorage.getItem('host'))
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value)
@@ -17,17 +17,22 @@ export const HostForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    $.post(
-      location.href,
+
+    $.ajax(
+      globalThis.apiLocation + 'host',
       {
-        rest: true,
-        host: input
-      },
-      data => {
-        updateError(data)
-        updateLevel(data ? '' : 'LOGIN')
+        type: "POST",
+        data: JSON.stringify(input),
+        contentType: 'application/json; charset=utf-8',
+        processData: false,
+        success: data => {
+          updateError(data)
+          updateLevel(data ? '' : 'LOGIN')
+          if (!data) { localStorage.setItem('host', input) }
+        }
       }
     )
+
   }
 
   return (

@@ -10,27 +10,35 @@ export const LoginForm = () => {
   const { updateError, updateLevel, updateCdir } = bindActionCreators(ActionCreators, dispatch)
 
   const [creds, setCreds]: [creds, React.Dispatch<React.SetStateAction<creds>>] = useState({
-    uname: globalThis.user,
-    pword: globalThis.pword
+    user: localStorage.getItem('user'),
+    pword: localStorage.getItem('pword')
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    $.post(
-      location.href,
+    $.ajax(
+      globalThis.apiLocation + 'listdir',
       {
-        rest: true,
-        user: creds.uname,
-        pword: creds.pword
-      }, data => {
-        data = JSON.parse(data) as string | directory[]
-        if (typeof data === 'string') {
-          updateError(data)
-          return
+        type: "POST",
+        data: JSON.stringify({
+          host: localStorage.getItem('host'),
+          user: creds.user,
+          pword: creds.pword
+        }),
+        processData: false,
+        contentType: 'application/json; charset=utf-8',
+        success: data => {
+          data = JSON.parse(data) as string | directory[]
+          if (typeof data === 'string') {
+            updateError(data)
+            return
+          }
+          updateCdir(data)
+          updateLevel('BROWSE')
+          updateError('')
+          localStorage.setItem('user', creds.user)
+          localStorage.setItem('pword', creds.pword)
         }
-        updateCdir(data)
-        updateLevel('BROWSE')
-        updateError('')
       }
     )
   }
@@ -46,7 +54,7 @@ export const LoginForm = () => {
     <form className="col-3 p-0 mt-3" method="post" onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="uname_input">User:</label>
-        <input type="text" autoComplete="off" className="form-control" id="uname_input" name="uname" value={creds.uname} onChange={handleChange} />
+        <input type="text" autoComplete="off" className="form-control" id="uname_input" name="user" value={creds.user} onChange={handleChange} />
       </div>
       <div className="form-group">
         <label htmlFor="pword_input">Password:</label>
