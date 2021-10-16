@@ -8,8 +8,6 @@ import { HostForm } from './comps/host'
 import { LoginForm } from './comps/login'
 import { DirList } from './comps/dirlist'
 
-globalThis.apiLocation = 'http://calc.world:5008/api/'
-
 $(document).ready(() => {
 
   const App = () => {

@@ -7,6 +7,7 @@ import { pathChange } from '../utils'
 import * as ActionCreators from '../actions'
 
 import { filesize } from '../utils'
+import { Rename } from './rename'
 
 export const DirList = () => {
 
@@ -135,13 +136,6 @@ export const DirList = () => {
 
       }
     )
-
-    //     const x = new XMLHttpRequest()
-    //     x.open("GET", data.url, true)
-    //     x.responseType = 'blob'
-    //     x.onload = (e: ProgressEvent<XMLHttpRequest>) => download(e.target.response, getFile, (data as filelink).mime ? ((data as filelink).mime as string) : 'application/octet-stream')
-    //     x.send()
-
   }
 
   let items: JSX.Element[] = path == '.' ? [] : [
@@ -162,7 +156,7 @@ export const DirList = () => {
         data-dir={c.name}
         onClick={c.type == 'dir' ? handleFolder : handleFile}
         style={{ cursor: 'pointer' }}>
-        <span>{c.name}</span>
+        <Rename name={c.name} key={new Date().getTime()} />
         {c.type == 'file' ? <span style={{ margin: "0 1em 0 auto" }}>{filesize(parseInt(c.size))}</span> : ''}
         <span className='badge badge-secondary'>{c.modify}</span>
       </li>
