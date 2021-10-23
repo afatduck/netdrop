@@ -8,6 +8,7 @@ import * as ActionCreators from '../actions'
 
 import { filesize } from '../utils'
 import { Rename } from './rename'
+import { DeleteItem } from './delete'
 
 export const DirList = () => {
 
@@ -158,7 +159,8 @@ export const DirList = () => {
         style={{ cursor: 'pointer' }}>
         <Rename name={c.name} key={new Date().getTime()} />
         {c.type == 'file' ? <span style={{ margin: "0 1em 0 auto" }}>{filesize(parseInt(c.size))}</span> : ''}
-        <span className='badge badge-secondary'>{c.modify}</span>
+        <span className='badge badge-secondary' style={c.type == 'dir' ? { marginLeft: 'auto' } : {}}>{c.modify}</span>
+        <DeleteItem name={c.name} key={'d' + new Date().getTime()} />
       </li>
     )
   }
