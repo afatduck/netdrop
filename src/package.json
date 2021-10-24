@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "wp": "webpack -w"
+    "wp": "webpack -w",
+    "sass": "sass \"./css/netdrop.sass\" \"../web/static/netdrop.css\" -w"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",

@@ -6,13 +6,12 @@ import * as ActionCreators from '../actions'
 
 export const Rename = (props: { name: string }) => {
 
-  const path = useSelector((state: RootState) => state.path)
+  const { path, cdir } = useSelector((state: RootState) => state)
   const dispatch = useDispatch()
-  const { updateError } = bindActionCreators(ActionCreators, dispatch)
+  const { updateError, updateCdir } = bindActionCreators(ActionCreators, dispatch)
 
   const [editing, setEditing]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const [loading, setLoading]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
-  const [name, setName]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(props.name)
   const [input, setInput]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(props.name)
 
   const handleClick = (e: React.MouseEvent) => {
@@ -44,7 +43,12 @@ export const Rename = (props: { name: string }) => {
           updateError(data)
           return
         }
-        setName(input)
+        updateError('')
+        let cdirCopy: directory[] = [...cdir]
+        for (let dir of cdirCopy) {
+          if (dir.name == props.name) { dir.name = input }
+        }
+        updateCdir(cdirCopy)
       }
     })
       .done(() => {
@@ -65,7 +69,7 @@ export const Rename = (props: { name: string }) => {
             </div>
           </form>
           :
-          <span>{name}</span>
+          <span>{props.name}</span>
       }
 
       {

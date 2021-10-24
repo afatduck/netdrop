@@ -9,6 +9,7 @@ import * as ActionCreators from '../actions'
 import { filesize } from '../utils'
 import { Rename } from './rename'
 import { DeleteItem } from './delete'
+import { UploadFile } from './upload'
 
 export const DirList = () => {
 
@@ -44,6 +45,7 @@ export const DirList = () => {
           updatePath(newPath)
           updateCdir(data)
           updateError('')
+          $('#dirlist')[0].scrollTop = 0
         }
       }
     )
@@ -112,7 +114,9 @@ export const DirList = () => {
 
                     req.addEventListener('progress', (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
                       setProgress(p => {
-                        p.percentage = Math.round(e.loaded / e.total * 100)
+                        try {
+                          p.percentage = Math.round(e.loaded / e.total * 100)
+                        } catch { }
                         return { ...p }
                       })
                       if (e.loaded == e.total) {
@@ -122,8 +126,8 @@ export const DirList = () => {
                     })
 
                     req.responseType = 'blob'
-
                     req.open('get', globalThis.apiLocation + fpath)
+                    req.setRequestHeader('Accept', '*/*')
 
                     req.send()
 
@@ -166,19 +170,23 @@ export const DirList = () => {
   }
 
   return (
-    <ul className='mt-5 list-group'>
-      {items}
-      {progress != null ?
-        <div style={{ position: 'fixed', width: "100vw", height: "100vh", boxSizing: 'border-box', padding: '35vh 10vw', backgroundColor: 'rgba(128, 128, 128, 0.4)', top: 0, left: 0 }}>
-          <div className="container-xl bg-light d-flex flex-column align-content-center m-6">
-            <h2 className="text-center m-4">{progress.title}</h2>
-            <div className="m-4">
-              <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: progress.percentage + "%" }}>{progress.percentage}%</div>
+    <div className="mt-4">
+      <UploadFile key={'files'} />
+      <ul className='mt-1 list-group' id="dirlist">
+        {items}
+        {progress != null ?
+          <div style={{ position: 'fixed', width: "100vw", height: "100vh", boxSizing: 'border-box', padding: '35vh 10vw', backgroundColor: 'rgba(128, 128, 128, 0.4)', top: 0, left: 0 }}>
+            <div className="container-xl bg-light d-flex flex-column align-content-center m-6">
+              <h2 className="text-center m-4">{progress.title}</h2>
+              <div className="m-4">
+                <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: progress.percentage + "%" }}>{progress.percentage}%</div>
+              </div>
             </div>
-          </div>
-        </div> : ''
-      }
-    </ul>
+          </div> : ''
+        }
+      </ul>
+      <span>{path}</span>
+    </div>
   )
 
 }
