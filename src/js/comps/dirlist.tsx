@@ -175,7 +175,7 @@ export const DirList = () => {
       <ul className='mt-1 list-group' id="dirlist">
         {items}
         {progress != null ?
-          <div style={{ position: 'fixed', width: "100vw", height: "100vh", boxSizing: 'border-box', padding: '35vh 10vw', backgroundColor: 'rgba(128, 128, 128, 0.4)', top: 0, left: 0 }}>
+          <div className="progressOverlay">
             <div className="container-xl bg-light d-flex flex-column align-content-center m-6">
               <h2 className="text-center m-4">{progress.title}</h2>
               <div className="m-4">
