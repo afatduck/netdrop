@@ -36,7 +36,7 @@ export const Rename = (props: { name: string }) => {
         name: input,
         host: localStorage.getItem('host'),
         user: localStorage.getItem('user'),
-        pword: localStorage.getItem('pword')
+        pword: globalThis.ftpPassword
       }),
       success: (data: string) => {
         if (data) {
@@ -63,7 +63,7 @@ export const Rename = (props: { name: string }) => {
 
       {
         editing ?
-          <form className="form-inline" onSubmit={handleSubmit} style={{ display: 'inline' }} onClick={(e: React.MouseEvent) => { e.stopPropagation() }}>
+          <form className="form-inline" onSubmit={handleSubmit} onClick={(e: React.MouseEvent) => { e.stopPropagation() }}>
             <div className="form-group">
               <input className="form-control" value={input} onChange={handleChange} />
             </div>

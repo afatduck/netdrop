@@ -25,7 +25,7 @@ export const DeleteItem = (props: { name: string }) => {
         path: '/' + path + '/' + props.name,
         host: localStorage.getItem('host'),
         user: localStorage.getItem('user'),
-        pword: localStorage.getItem('pword')
+        pword: globalThis.ftpPassword
       }),
       success: (data: string) => {
         if (data) {

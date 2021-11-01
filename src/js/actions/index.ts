@@ -1,7 +1,5 @@
 import { Dispatch } from 'redux'
 
-import { sortDirs } from '../utils'
-
 export const updateError = (msg: string) =>
   (dispatch: Dispatch) => {
     dispatch({
@@ -10,26 +8,42 @@ export const updateError = (msg: string) =>
     })
   }
 
-export const updateLevel = (lev: levels | '') =>
+export const updateLevel = (state: states | '') =>
   (dispatch: Dispatch) => {
     dispatch({
       type: 'UPDATE_LEVEL',
-      payload: lev
+      payload: state
     })
   }
 
-export const updateCdir = (d: directory[]) =>
+export const updateUser = (user: UserData) =>
+  (dispatch: Dispatch) => {
+    dispatch({
+      type: 'UPDATE_USER',
+      payload: user
+    })
+  }
+
+export const updateCdir = (d: directory[] | directory) =>
   (dispatch: Dispatch) => {
     dispatch({
       type: 'UPDATE_CDIR',
-      payload: sortDirs(d)
+      payload: d
     })
   }
 
-export const updatePath = (f: string | 0) =>
+export const updatePath = (f: string | 0 | -1) =>
   (dispatch: Dispatch) => {
     dispatch({
       type: 'UPDATE_PATH',
+      payload: f
+    })
+  }
+
+export const updateProgress = (f: string | number | progress | null) =>
+  (dispatch: Dispatch) => {
+    dispatch({
+      type: 'UPDATE_PROGRESS',
       payload: f
     })
   }

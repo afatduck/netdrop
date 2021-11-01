@@ -1,4 +1,5 @@
 export const initGlobals: globals = {
-  level: 'HOST',
-  error: ''
+  state: 'CONNECTING',
+  error: '',
+  user: null
 }

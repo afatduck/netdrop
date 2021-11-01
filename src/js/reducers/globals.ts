@@ -1,16 +1,18 @@
-type globalsReducerType = 'UPDATE_ERROR' | 'UPDATE_LEVEL'
-
-export const globals = (state: globals = null, action: { type: globalsReducerType, payload: string | levels }) => {
+export const globals = (state: globals = null, action: Action<string | states | UserData>): globals => {
 
   switch (action.type) {
 
     case 'UPDATE_ERROR':
-      state.error = action.payload
+      state.error = (action.payload as string)
       return { ...state }
 
     case 'UPDATE_LEVEL':
-      if (state.level == action.payload || action.payload == '') { return state }
-      state.level = action.payload as levels
+      if (state.state == action.payload || action.payload == '') { return state }
+      state.state = action.payload as states
+      return { ...state }
+
+    case 'UPDATE_USER':
+      state.user = (action.payload as UserData)
       return { ...state }
 
     default: return state

@@ -2,7 +2,7 @@
   max-height: 40vh
   overflow-y: scroll
 
-.progressOverlay
+.progressOverlay, .overlay
    position: fixed
    width: 100vw
    height: 100vh
@@ -12,3 +12,21 @@
    top: 0
    left: 0
    z-index: 2
+
+.overlay
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-direction: column
+  padding: 0
+  form
+    width: 50%
+    box-sizing: border-box
+    padding: 2em
+    border-radius: 10px
+    position: relative
+    i
+      position: absolute
+      top: 1em
+      right: 1em
+      cursor: pointer

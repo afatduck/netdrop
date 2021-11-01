@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import download from 'downloadjs'
@@ -10,15 +10,17 @@ import { filesize } from '../utils'
 import { Rename } from './rename'
 import { DeleteItem } from './delete'
 import { UploadFile } from './upload'
+import { ProgressOverlay } from './progress'
+import { CreateDir } from './createdir'
 
 export const DirList = () => {
 
   const { cdir, path } = useSelector((state: RootState) => state)
 
   const dispatch = useDispatch()
-  const { updatePath, updateCdir, updateError } = bindActionCreators(ActionCreators, dispatch)
+  const { updatePath, updateCdir, updateError, updateProgress } = bindActionCreators(ActionCreators, dispatch)
 
-  const [progress, setProgress]: [progress, React.Dispatch<React.SetStateAction<progress>>] = useState(null)
+  if (!cdir) { return null }
 
   const handleFolder = (e: React.MouseEvent) => {
 
@@ -29,26 +31,25 @@ export const DirList = () => {
       {
         type: "POST",
         data: JSON.stringify({
-          host: localStorage.getItem('host'),
-          user: localStorage.getItem('user'),
-          pword: localStorage.getItem('pword'),
-          path: pathChange(path, newPath)
+          Host: localStorage.getItem('host'),
+          Username: localStorage.getItem('user'),
+          Password: globalThis.ftpPassword,
+          Secure: localStorage.getItem("Secure") == "true",
+          Path: pathChange(path, newPath).substr(2)
         }),
         processData: false,
-        contentType: 'application/json; charset=utf-8',
-        success: (data: string | directory[]) => {
-          data = JSON.parse(data as string)
-          if (typeof data === 'string') {
-            updateError(data)
-            return
-          }
-          updatePath(newPath)
-          updateCdir(data)
-          updateError('')
-          $('#dirlist')[0].scrollTop = 0
+        contentType: 'application/json; charset=utf-8'
+      })
+      .done((data: ListDirRespone) => {
+        if (!data.result) {
+          updateError(data.errors[0])
+          return
         }
-      }
-    )
+        updatePath(newPath)
+        updateCdir(data.dirList)
+        updateError('')
+        $('#dirlist')[0].scrollTop = 0
+      })
 
   }
 
@@ -68,7 +69,7 @@ export const DirList = () => {
         data: JSON.stringify({
           path: localStorage.getItem('host') + path.replace('.', '') + "/" + getFile,
           user: localStorage.getItem('user'),
-          pword: localStorage.getItem('pword')
+          pword: globalThis.ftpPassword
         }),
         success: data => {
 
@@ -83,7 +84,7 @@ export const DirList = () => {
           fsize = data.size
           mime = data.mime
 
-          setProgress({
+          updateProgress({
             title: "Getting File",
             percentage: 0
           })
@@ -97,15 +98,12 @@ export const DirList = () => {
                 data: JSON.stringify(fpath),
                 success: data => {
                   data = JSON.parse(data)
-                  setProgress(p => {
-                    p.percentage = Math.round(data / fsize * 100)
-                    return { ...p }
-                  })
+                  updateProgress(Math.round(data / fsize * 100))
 
                   if (data == fsize) {
 
                     clearInterval(intervalID)
-                    setProgress({
+                    updateProgress({
                       title: "Downloading File",
                       percentage: 0
                     })
@@ -113,15 +111,14 @@ export const DirList = () => {
                     let req = new XMLHttpRequest();
 
                     req.addEventListener('progress', (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
-                      setProgress(p => {
-                        try {
-                          p.percentage = Math.round(e.loaded / e.total * 100)
-                        } catch { }
-                        return { ...p }
-                      })
+                      try {
+                        updateProgress(Math.round(e.loaded / e.total * 100))
+                      } catch { }
                       if (e.loaded == e.total) {
-                        download(req.response, getFile, mime)
-                        setProgress(null)
+                        setTimeout(() => {
+                          download(req.response, getFile, mime)
+                        }, 0)
+                        updateProgress(null)
                       }
                     })
 
@@ -171,19 +168,13 @@ export const DirList = () => {
 
   return (
     <div className="mt-4">
-      <UploadFile key={'files'} />
+      <div className="d-flex">
+        <UploadFile key="uf" />
+        <CreateDir key="cd" />
+      </div>
       <ul className='mt-1 list-group' id="dirlist">
         {items}
-        {progress != null ?
-          <div className="progressOverlay">
-            <div className="container-xl bg-light d-flex flex-column align-content-center m-6">
-              <h2 className="text-center m-4">{progress.title}</h2>
-              <div className="m-4">
-                <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: progress.percentage + "%" }}>{progress.percentage}%</div>
-              </div>
-            </div>
-          </div> : ''
-        }
+        <ProgressOverlay />
       </ul>
       <span>{path}</span>
     </div>

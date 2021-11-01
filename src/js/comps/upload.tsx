@@ -4,15 +4,16 @@ import { bindActionCreators } from 'redux'
 
 import * as ActionCreators from '../actions'
 
+import { ProgressOverlay } from './progress'
+
 export const UploadFile = () => {
 
   const path = useSelector((state: RootState) => state.path)
 
   const dispatch = useDispatch()
-  const { updateError } = bindActionCreators(ActionCreators, dispatch)
+  const { updateError, updateProgress, updateCdir, updateLevel } = bindActionCreators(ActionCreators, dispatch)
 
   const [files, setFiles]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(0)
-  const [progress, setProgress]: [progress, React.Dispatch<React.SetStateAction<progress>>] = useState(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFiles(e.target.files.length)
@@ -28,9 +29,9 @@ export const UploadFile = () => {
       path: path.substr(1),
       host: localStorage.getItem('host'),
       user: localStorage.getItem('user'),
-      pword: localStorage.getItem('pword')
+      pword: globalThis.ftpPassword
     }))
-    setProgress({
+    updateProgress({
       title: 'Uploading files...',
       percentage: 0
     })
@@ -41,15 +42,12 @@ export const UploadFile = () => {
           if (evt.lengthComputable) {
             let percentComplete = Math.trunc((evt.loaded / evt.total) * 100);
             if (percentComplete == 100) {
-              setProgress({
+              updateProgress({
                 title: 'Copying files...',
                 percentage: 101
               })
             }
-            setProgress((p: progress) => {
-              p.percentage = percentComplete
-              return { ...p }
-            })
+            updateProgress(percentComplete)
           }
         }, false);
         return xhr;
@@ -58,14 +56,67 @@ export const UploadFile = () => {
       url: globalThis.apiLocation + 'upload',
       contentType: false,
       processData: false,
-      data: fd,
-      success: (data: string) => {
-        setProgress(null)
-      }
-    }).fail(() => {
-      setProgress(null)
-      updateError('Something went wrong.')
+      data: fd
     })
+      .fail(() => {
+        updateLevel("CONNECTING")
+      })
+      .done((data: string) => {
+        let interval: ReturnType<typeof setInterval>
+        updateProgress({
+          title: 'Transfering files...',
+          percentage: 0
+        })
+        interval = setInterval(() => {
+          $.ajax({
+            url: globalThis.apiLocation + 'checkupload',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            processData: false,
+            data: JSON.stringify(data),
+            success: (perData: string) => {
+              const percentage = JSON.parse(perData)
+
+              if (percentage == -1 || percentage == 100) {
+                clearInterval(interval)
+                updateProgress(null)
+                updateError(percentage == -1 ? 'Something went wrong.' : '')
+
+                $.ajax(
+                  globalThis.apiLocation + 'listdir',
+                  {
+                    type: "POST",
+                    data: JSON.stringify({
+                      Host: localStorage.getItem('host'),
+                      Username: localStorage.getItem('user'),
+                      Password: globalThis.ftpPassword,
+                      Secure: localStorage.getItem('secure') == "true",
+                      Path: path.substr(2)
+                    }),
+                    processData: false,
+                    contentType: 'application/json; charset=utf-8'
+                  })
+                  .done((data: ListDirRespone) => {
+                    if (!data.result) {
+                      updateError(data.errors[0])
+                      return
+                    }
+                    updateCdir(data.dirList)
+                    $('#dirlist')[0].scrollTop = 0
+                  })
+                  .fail(() => {
+                    updateLevel("CONNECTING")
+                  })
+
+                return
+              }
+
+              updateProgress(percentage)
+
+            }
+          })
+        }, 750)
+      })
   }
 
   return (
@@ -74,16 +125,7 @@ export const UploadFile = () => {
         <input type="file" id="uploadfiles" name="files" onChange={handleChange} multiple={true} className="d-none" />
       </label>
       <button type="submit" className="btn btn-outline-primary d-inline-block ml-2 btn-sm" disabled={files ? false : true}>Upload</button>
-      {progress != null ?
-        <div className="progressOverlay">
-          <div className="container-xl bg-light d-flex flex-column align-content-center m-6">
-            <h2 className="text-center m-4">{progress.title}</h2>
-            <div className="m-4">
-              <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: Math.min(progress.percentage, 100) + "%" }}>{progress.percentage != 101 ? progress.percentage + '%' : ''}</div>
-            </div>
-          </div>
-        </div> : ''
-      }
+      <ProgressOverlay />
     </form>
   )
 
