@@ -8,7 +8,7 @@ export const CreateDir = () => {
 
   const path = useSelector((state: RootState) => state.path)
   const dispatch = useDispatch()
-  const { updateCdir, updateError } = bindActionCreators(ActionCreators, dispatch)
+  const { updateCdir, updateError, updateLevel } = bindActionCreators(ActionCreators, dispatch)
 
   const [input, setInput]: [string, React.Dispatch<React.SetStateAction<string>>] = useState('')
   const [loading, setLoading]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
@@ -26,15 +26,21 @@ export const CreateDir = () => {
       contentType: 'application/json; charset=utf-8',
       type: 'POST',
       data: JSON.stringify({
-        host: localStorage.getItem('host') + path.substr(1) + '/' + input,
-        user: localStorage.getItem('user'),
-        pword: globalThis.ftpPassword
-      }),
-      success: (data: string) => {
-        if (data) {
-          updateError(data)
+        Host: localStorage.getItem('host') + path.substr(1) + '/' + input,
+        Username: localStorage.getItem('user'),
+        Password: globalThis.ftpPassword
+      })
+    })
+      .fail(() => {
+        updateLevel("CONNECTING")
+      })
+      .done((data: BaseResponse) => {
+        setLoading(false)
+        if (!data.result) {
+          updateError(data.errors[0])
           return
         }
+        updateError("")
         const t = new Date()
         updateCdir({
           name: input,
@@ -42,12 +48,7 @@ export const CreateDir = () => {
           modify: `${t.getMonth() + 1}/${t.getDate()}/${t.getFullYear()} ${t.getHours()}:${t.getMinutes()}`,
           type: 'dir'
         })
-      }
-    }).fail(() => {
-      updateError('Something went wrong')
-    }).done(() => {
-      setLoading(false)
-    })
+      })
   }
 
   return (

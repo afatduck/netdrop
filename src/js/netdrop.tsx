@@ -12,9 +12,17 @@ import { Account } from './comps/account'
 
 import * as ActionCreators from './actions'
 
-globalThis.apiLocation = localStorage.getItem('apiLocation') || 'http://calc.world:5008/api/'
+globalThis.apiLocation = localStorage.getItem('apiLocation') || 'https://calc.world:5009/api/'
 
 $(document).ready(() => {
+
+  let dragTimeout: ReturnType<typeof setTimeout>
+  $(document).on("dragover", (e: Event) => {
+    e.preventDefault()
+    $('.dropzone-root').css("z-index", 2)
+    clearTimeout(dragTimeout)
+    dragTimeout = setTimeout(() => { $('.dropzone-root').css("z-index", -1) }, 100)
+  })
 
   const App = () => {
 
@@ -26,7 +34,7 @@ $(document).ready(() => {
     const [localhost, setLocalhost]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(globalThis.apiLocation.includes('localhost'))
     const switchApi = () => {
       setLocalhost(!localhost)
-      localStorage.setItem('apiLocation', `http://${!localhost ? 'localhost' : 'calc.world'}:5008/api/`)
+      localStorage.setItem('apiLocation', `https://${!localhost ? 'localhost' : 'calc.world'}:5009/api/`)
       globalThis.apiLocation = localStorage.getItem('apiLocation')
       updateLevel("CONNECTING")
     }
@@ -48,7 +56,7 @@ $(document).ready(() => {
         </nav>
         <section className="container-fluid p-4">
           {(() => { if (globals.state == 'CONNECTING') { return <ContactApi key={localhost ? 'a' : 'B'} /> } })()}
-          <DirList />
+          {globals.state == "CONNECTING" ? null : <DirList />}
           <h5 className='text-danger mt-3'>{globals.error}</h5>
           <button type="button" className="btn btn-info btn-sm" onClick={switchApi} >{`Switch to ${localhost ? 'online' : 'localhost'} api`}</button>
           <br />

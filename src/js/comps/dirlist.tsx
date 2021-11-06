@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { useDropzone } from 'react-dropzone'
 import download from 'downloadjs'
 
 import { pathChange } from '../utils'
 import * as ActionCreators from '../actions'
 
 import { filesize } from '../utils'
+import { uploadFiles } from './uploadfiles'
+
 import { Rename } from './rename'
 import { DeleteItem } from './delete'
 import { UploadFile } from './upload'
@@ -18,7 +21,15 @@ export const DirList = () => {
   const { cdir, path } = useSelector((state: RootState) => state)
 
   const dispatch = useDispatch()
-  const { updatePath, updateCdir, updateError, updateProgress } = bindActionCreators(ActionCreators, dispatch)
+  const { updatePath, updateCdir, updateError, updateProgress, updateLevel } = bindActionCreators(ActionCreators, dispatch)
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    uploadFiles((acceptedFiles as Files[]))
+  }, [])
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: onDrop
+  })
 
   if (!cdir) { return null }
 
@@ -50,6 +61,7 @@ export const DirList = () => {
         updateError('')
         $('#dirlist')[0].scrollTop = 0
       })
+      .fail(() => { updateLevel("CONNECTING") })
 
   }
 
@@ -67,77 +79,90 @@ export const DirList = () => {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify({
-          path: localStorage.getItem('host') + path.replace('.', '') + "/" + getFile,
-          user: localStorage.getItem('user'),
-          pword: globalThis.ftpPassword
-        }),
-        success: data => {
+          Host: localStorage.getItem('host') + path.replace('.', '') + "/" + getFile,
+          Username: localStorage.getItem('user'),
+          Password: globalThis.ftpPassword
+        })
+      })
+      .done((data: DownloadFileResponse) => {
 
-          data = JSON.parse(data)
-          if (data.error) {
-            updateError(data.error)
-            return
-          }
-
-          updateError('')
-          fpath = data.url
-          fsize = data.size
-          mime = data.mime
-
-          updateProgress({
-            title: "Getting File",
-            percentage: 0
-          })
-
-          intervalID = setInterval(() => {
-            $.ajax(
-              globalThis.apiLocation + 'progress',
-              {
-                type: 'POST',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(fpath),
-                success: data => {
-                  data = JSON.parse(data)
-                  updateProgress(Math.round(data / fsize * 100))
-
-                  if (data == fsize) {
-
-                    clearInterval(intervalID)
-                    updateProgress({
-                      title: "Downloading File",
-                      percentage: 0
-                    })
-
-                    let req = new XMLHttpRequest();
-
-                    req.addEventListener('progress', (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
-                      try {
-                        updateProgress(Math.round(e.loaded / e.total * 100))
-                      } catch { }
-                      if (e.loaded == e.total) {
-                        setTimeout(() => {
-                          download(req.response, getFile, mime)
-                        }, 0)
-                        updateProgress(null)
-                      }
-                    })
-
-                    req.responseType = 'blob'
-                    req.open('get', globalThis.apiLocation + fpath)
-                    req.setRequestHeader('Accept', '*/*')
-
-                    req.send()
-
-                  }
-                }
-              }
-            )
-          }, 750)
-
+        if (!data.result) {
+          updateError(data.errors[0])
+          return
         }
 
-      }
-    )
+        updateError('')
+        fpath = data.url
+        fsize = data.size
+        mime = data.mime
+
+        updateProgress({
+          title: "Getting File",
+          percentage: 0
+        })
+
+        intervalID = setInterval(() => {
+          $.ajax(
+            globalThis.apiLocation + 'progress',
+            {
+              type: 'POST',
+              contentType: "application/json; charset=utf-8",
+              data: JSON.stringify(fpath)
+            }
+          )
+            .done((data: ProgressResponse) => {
+
+              if (!data.result) {
+                updateError("Failed to get file.")
+                clearInterval(intervalID)
+                return
+              }
+
+              updateProgress(Math.round(data.done / fsize * 100))
+
+              if (data.done == fsize) {
+
+                clearInterval(intervalID)
+                updateProgress({
+                  title: "Downloading File",
+                  percentage: 0
+                })
+
+                let req = new XMLHttpRequest();
+
+                req.addEventListener('progress', (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
+                  try {
+                    updateProgress(Math.round(e.loaded / e.total * 100))
+                  } catch { }
+                  if (e.loaded == e.total) {
+                    setTimeout(() => {
+                      download(req.response, getFile, mime)
+                    }, 0)
+                    updateProgress(null)
+                  }
+                })
+
+                req.responseType = 'blob'
+                req.open('get', globalThis.apiLocation + fpath)
+                req.setRequestHeader('Accept', '*/*')
+
+                req.send()
+
+              }
+            })
+            .fail(() => {
+              updateLevel("CONNECTING")
+              clearInterval(intervalID)
+            })
+
+
+        }, 750)
+
+
+      })
+      .fail(() => { updateLevel("CONNECTING") })
+
+
   }
 
   let items: JSX.Element[] = path == '.' ? [] : [
@@ -172,11 +197,14 @@ export const DirList = () => {
         <UploadFile key="uf" />
         <CreateDir key="cd" />
       </div>
-      <ul className='mt-1 list-group' id="dirlist">
+      <ul className='mt-1 list-group' id="dirlist" >
+        <div {...getRootProps({ className: "w-100 dropzone-root" })}></div>
         {items}
         <ProgressOverlay />
       </ul>
       <span>{path}</span>
+      {isDragActive ? "he do be dropping" : ""}
+      <input {...getInputProps({ className: "d-hidden", onClick: e => e.preventDefault() })} />
     </div>
   )
 

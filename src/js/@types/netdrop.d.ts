@@ -43,7 +43,7 @@ type Action<T> = {
 }
 
 type Credentials = {
-  id: number
+  name: string
   host: string
   username: string
   password: string
@@ -52,7 +52,7 @@ type Credentials = {
 
 type UserData = {
   username: string
-  credentials: Credential[]
+  credentials: Credentials[]
 }
 
 type LoginInput = {
@@ -61,14 +61,29 @@ type LoginInput = {
   repeat: string
 }
 
-type LoginResponse = {
+interface BaseResponse {
   result: boolean
-  userData: UserData
   errors: string[]
 }
 
-type ListDirRespone = {
-  result: boolean
-  errors: string[]
+interface LoginResponse extends BaseResponse {
+  userData: UserData
+}
+
+interface ListDirRespone extends BaseResponse {
   dirList: directory[]
+}
+
+interface DownloadFileResponse extends BaseResponse {
+  url: string
+  mime: string
+  size: number
+}
+
+interface ProgressResponse extends BaseResponse {
+  done: number
+}
+
+interface Files extends File {
+  path: string
 }

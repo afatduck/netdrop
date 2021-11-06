@@ -9,7 +9,7 @@ export const DeleteItem = (props: { name: string }) => {
   const { path, cdir } = useSelector((state: RootState) => state)
 
   const dispatch = useDispatch()
-  const { updateError, updateCdir } = bindActionCreators(ActionCreators, dispatch)
+  const { updateError, updateCdir, updateLevel } = bindActionCreators(ActionCreators, dispatch)
 
   const [loading, setLoading]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
 
@@ -22,22 +22,24 @@ export const DeleteItem = (props: { name: string }) => {
       contentType: 'application/json; charset=utf-8',
       processData: false,
       data: JSON.stringify({
-        path: '/' + path + '/' + props.name,
-        host: localStorage.getItem('host'),
-        user: localStorage.getItem('user'),
-        pword: globalThis.ftpPassword
-      }),
-      success: (data: string) => {
-        if (data) {
-          updateError(data)
+        Path: '/' + path + '/' + props.name,
+        Host: localStorage.getItem('host'),
+        Username: localStorage.getItem('user'),
+        Password: globalThis.ftpPassword
+      })
+    })
+      .fail(() => {
+        updateLevel("CONNECTING")
+      })
+      .done((data: BaseResponse) => {
+        setLoading(false)
+        if (!data.result) {
+          updateError(data.errors[0])
           return
         }
         updateCdir(cdir.filter((c: directory) => c.name != props.name))
         updateError('')
-      }
-    })
-      .fail(() => { updateError('Something went wrong') })
-      .done(() => { setLoading(false) })
+      })
   }
 
   return (

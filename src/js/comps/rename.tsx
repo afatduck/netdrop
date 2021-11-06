@@ -8,7 +8,7 @@ export const Rename = (props: { name: string }) => {
 
   const { path, cdir } = useSelector((state: RootState) => state)
   const dispatch = useDispatch()
-  const { updateError, updateCdir } = bindActionCreators(ActionCreators, dispatch)
+  const { updateError, updateCdir, updateLevel } = bindActionCreators(ActionCreators, dispatch)
 
   const [editing, setEditing]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const [loading, setLoading]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
@@ -24,6 +24,12 @@ export const Rename = (props: { name: string }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (props.name == input) {
+      setEditing(false)
+      return
+    }
+
     setLoading(true)
 
     $.ajax({
@@ -32,15 +38,18 @@ export const Rename = (props: { name: string }) => {
       contentType: 'application/json; charset=utf-8',
       processData: false,
       data: JSON.stringify({
-        path: '/' + path + '/' + props.name,
-        name: input,
-        host: localStorage.getItem('host'),
-        user: localStorage.getItem('user'),
-        pword: globalThis.ftpPassword
-      }),
-      success: (data: string) => {
-        if (data) {
-          updateError(data)
+        Path: '/' + path + '/' + props.name,
+        Name: input,
+        Host: localStorage.getItem('host'),
+        Username: localStorage.getItem('user'),
+        Password: globalThis.ftpPassword
+      })
+    })
+      .done((data: BaseResponse) => {
+        setLoading(false)
+        setEditing(false)
+        if (!data.result) {
+          updateError(data.errors[0])
           return
         }
         updateError('')
@@ -49,12 +58,8 @@ export const Rename = (props: { name: string }) => {
           if (dir.name == props.name) { dir.name = input }
         }
         updateCdir(cdirCopy)
-      }
-    })
-      .done(() => {
-        setLoading(false)
-        setEditing(false)
       })
+      .fail(() => { updateLevel("CONNECTING") })
 
   }
 

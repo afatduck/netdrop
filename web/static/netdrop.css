@@ -1,6 +1,7 @@
 #dirlist {
   max-height: 40vh;
   overflow-y: scroll;
+  position: relative;
 }
 
 .progressOverlay, .overlay {
@@ -12,7 +13,7 @@
   background-color: rgba(128, 128, 128, 0.4);
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 3;
 }
 
 .overlay {
@@ -34,6 +35,14 @@
   top: 1em;
   right: 1em;
   cursor: pointer;
+}
+
+.dropzone-root {
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  background-color: rgba(128, 128, 128, 0.5);
 }
 
 /*# sourceMappingURL=netdrop.css.map */
