@@ -2,6 +2,8 @@ import React, { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { bindActionCreators } from 'redux'
 
+import { getBaseFtpRequest } from '../utils'
+
 import * as ActionCreators from '../actions'
 
 export const Rename = (props: { name: string }) => {
@@ -38,11 +40,9 @@ export const Rename = (props: { name: string }) => {
       contentType: 'application/json; charset=utf-8',
       processData: false,
       data: JSON.stringify({
-        Path: '/' + path + '/' + props.name,
+        Path: path.substr(1) + '/' + props.name,
         Name: input,
-        Host: localStorage.getItem('host'),
-        Username: localStorage.getItem('user'),
-        Password: globalThis.ftpPassword
+        ...getBaseFtpRequest()
       })
     })
       .done((data: BaseResponse) => {

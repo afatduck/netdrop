@@ -2,6 +2,8 @@ import * as StoreActions from '../actions/store-actions'
 
 import { store } from '../store'
 
+import { getBaseFtpRequest } from '../utils'
+
 export const uploadFiles = (files: Files[] | FileList) => {
 
   const path = store.getState().path
@@ -25,9 +27,8 @@ export const uploadFiles = (files: Files[] | FileList) => {
   }
 
   fd.append('dataJson', JSON.stringify({
-    host: localStorage.getItem('host') + path.substr(1),
-    user: localStorage.getItem('user'),
-    pword: globalThis.ftpPassword
+    Path: path.substr(1),
+    ...getBaseFtpRequest()
   }))
   updateProgress({
     title: 'Uploading files...',
@@ -59,7 +60,14 @@ export const uploadFiles = (files: Files[] | FileList) => {
     .fail(() => {
       updateLevel("CONNECTING")
     })
-    .done((data: string) => {
+    .done((data: UploadResponse) => {
+
+      if (!data.result) {
+        updateError(data.errors.join("\n"))
+        updateProgress(null)
+        return
+      }
+
       let interval: ReturnType<typeof setInterval>
       updateProgress({
         title: 'Transfering files...',
@@ -71,7 +79,7 @@ export const uploadFiles = (files: Files[] | FileList) => {
           type: 'POST',
           contentType: 'application/json; charset=utf-8',
           processData: false,
-          data: JSON.stringify(data)
+          data: JSON.stringify(data.code)
         })
           .done((percentage: number) => {
 
@@ -85,11 +93,8 @@ export const uploadFiles = (files: Files[] | FileList) => {
                 {
                   type: "POST",
                   data: JSON.stringify({
-                    Host: localStorage.getItem('host'),
-                    Username: localStorage.getItem('user'),
-                    Password: globalThis.ftpPassword,
-                    Secure: localStorage.getItem('secure') == "true",
-                    Path: path.substr(2)
+                    ...getBaseFtpRequest(),
+                    Path: path.substr(1)
                   }),
                   processData: false,
                   contentType: 'application/json; charset=utf-8'

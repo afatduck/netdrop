@@ -18,6 +18,7 @@ type creds = {
   user: string
   password: string
   secure: boolean
+  port: string
 }
 
 type directory = {
@@ -48,6 +49,7 @@ type Credentials = {
   username: string
   password: string
   secure: boolean
+  port: number
 }
 
 type UserData = {
@@ -84,6 +86,18 @@ interface ProgressResponse extends BaseResponse {
   done: number
 }
 
+interface UploadResponse extends BaseResponse {
+  code: string
+}
+
 interface Files extends File {
   path: string
+}
+
+interface BaseFtpRequest {
+  Host: string
+  Username: string
+  Password: string
+  Secure: boolean
+  Port: number
 }

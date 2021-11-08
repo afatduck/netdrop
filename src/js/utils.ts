@@ -17,3 +17,11 @@ export const filesize = (s: number): string => {
   }
 
 }
+
+export const getBaseFtpRequest = (): BaseFtpRequest => ({
+  Host: localStorage.getItem('host'),
+  Username: localStorage.getItem('user'),
+  Password: globalThis.ftpPassword,
+  Secure: localStorage.getItem('secure') == "true",
+  Port: parseInt(localStorage.getItem('port'))
+})

@@ -21,12 +21,13 @@ export const LoginForm = () => {
     host: localStorage.getItem('host') || "",
     user: localStorage.getItem('user') || "",
     password: '',
-    secure: localStorage.getItem('secure') == "true"
+    secure: localStorage.getItem('secure') == "true",
+    port: localStorage.getItem('port') || (localStorage.getItem('secure') == "true" ? "990" : "21")
   })
 
   const checkIfDifferent = () => {
     for (let cred of userData.credentials) {
-      if (cred.host == input.host && cred.password == input.password && cred.username == input.user && cred.secure == input.secure) {
+      if (cred.host == input.host && cred.password == input.password && cred.username == input.user && input.port == cred.port.toString()) {
         return false
       }
     }
@@ -42,7 +43,8 @@ export const LoginForm = () => {
       host: cred.host,
       user: cred.username,
       password: cred.password,
-      secure: cred.secure
+      secure: cred.secure,
+      port: cred.port.toString()
     })
     setSelected(cred.name)
   }
@@ -65,6 +67,7 @@ export const LoginForm = () => {
     let { value, name, checked } = e.target
 
     setInput((prev: creds) => {
+      if (name == "secure" && (input.port == "21" || input.port == "990")) { prev.port = checked ? "990" : "21" }
       prev[name] = (name == 'secure' ? checked : value)
       return { ...prev }
     })
@@ -91,6 +94,7 @@ export const LoginForm = () => {
         Username: input.user,
         Password: input.password,
         Secure: input.secure,
+        Port: parseInt(input.port),
         Path: ""
       })
     })
@@ -109,6 +113,7 @@ export const LoginForm = () => {
         localStorage.setItem('user', input.user)
         localStorage.setItem('host', input.host)
         localStorage.setItem('secure', input.secure ? "true" : "false")
+        localStorage.setItem('port', input.port)
         globalThis.ftpPassword = input.password
         if (checkIfDifferent()) {
           setSave(true)
@@ -151,7 +156,8 @@ export const LoginForm = () => {
         Host: input.host,
         Username: input.user,
         Password: input.password,
-        Secure: input.secure
+        Secure: input.secure,
+        Port: parseInt(input.port)
       })
     })
       .done(() => {
@@ -163,7 +169,8 @@ export const LoginForm = () => {
           host: input.host,
           username: input.user,
           password: input.password,
-          secure: input.secure
+          secure: input.secure,
+          port: parseInt(input.port)
         })
       })
       .fail(() => {
@@ -200,6 +207,10 @@ export const LoginForm = () => {
                 <div className="form-group">
                   <label htmlFor="ftp_password_input">Password:</label>
                   <input type="password" className="form-control" name="password" placeholder="Password" id="ftp_password_input" autoComplete="ftppassword" value={input.password} onChange={handleChange} />
+                </div>
+                <div className="form-group w-25">
+                  <label htmlFor="ftp_port_input">Port:</label>
+                  <input type="number" className="form-control" name="port" placeholder="Port" id="ftp_port_input" autoComplete="ftpport" value={input.port} onChange={handleChange} />
                 </div>
                 <div className="form-check">
                   <input type="checkbox" className="form-check-input" name="secure" id="ftp_secure_check" checked={input.secure} onChange={handleChange} />

@@ -4,6 +4,8 @@ import { bindActionCreators } from 'redux'
 
 import * as ActionCreators from '../actions'
 
+import { getBaseFtpRequest } from '../utils'
+
 export const CreateDir = () => {
 
   const path = useSelector((state: RootState) => state.path)
@@ -26,9 +28,8 @@ export const CreateDir = () => {
       contentType: 'application/json; charset=utf-8',
       type: 'POST',
       data: JSON.stringify({
-        Host: localStorage.getItem('host') + path.substr(1) + '/' + input,
-        Username: localStorage.getItem('user'),
-        Password: globalThis.ftpPassword
+        ...getBaseFtpRequest(),
+        Path: path.substr(1) + '/' + input
       })
     })
       .fail(() => {

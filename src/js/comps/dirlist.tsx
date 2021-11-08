@@ -4,10 +4,9 @@ import { bindActionCreators } from 'redux'
 import { useDropzone } from 'react-dropzone'
 import download from 'downloadjs'
 
-import { pathChange } from '../utils'
 import * as ActionCreators from '../actions'
 
-import { filesize } from '../utils'
+import { filesize, pathChange, getBaseFtpRequest } from '../utils'
 import { uploadFiles } from './uploadfiles'
 
 import { Rename } from './rename'
@@ -27,7 +26,7 @@ export const DirList = () => {
     uploadFiles((acceptedFiles as Files[]))
   }, [])
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop: onDrop
   })
 
@@ -42,10 +41,7 @@ export const DirList = () => {
       {
         type: "POST",
         data: JSON.stringify({
-          Host: localStorage.getItem('host'),
-          Username: localStorage.getItem('user'),
-          Password: globalThis.ftpPassword,
-          Secure: localStorage.getItem("Secure") == "true",
+          ...getBaseFtpRequest(),
           Path: pathChange(path, newPath).substr(2)
         }),
         processData: false,
@@ -79,9 +75,8 @@ export const DirList = () => {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify({
-          Host: localStorage.getItem('host') + path.replace('.', '') + "/" + getFile,
-          Username: localStorage.getItem('user'),
-          Password: globalThis.ftpPassword
+          ...getBaseFtpRequest(),
+          Path: path.substr(1) + "/" + getFile,
         })
       })
       .done((data: DownloadFileResponse) => {
@@ -198,12 +193,11 @@ export const DirList = () => {
         <CreateDir key="cd" />
       </div>
       <ul className='mt-1 list-group' id="dirlist" >
-        <div {...getRootProps({ className: "w-100 dropzone-root" })}></div>
+        <div {...getRootProps({ className: "dropzone-root" })}><h2>DROP HERE TO UPLOAD</h2></div>
         {items}
         <ProgressOverlay />
       </ul>
       <span>{path}</span>
-      {isDragActive ? "he do be dropping" : ""}
       <input {...getInputProps({ className: "d-hidden", onClick: e => e.preventDefault() })} />
     </div>
   )

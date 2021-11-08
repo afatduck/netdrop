@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
+import { getBaseFtpRequest } from '../utils'
+
 import * as ActionCreators from '../actions'
 
 export const DeleteItem = (props: { name: string }) => {
@@ -22,10 +24,8 @@ export const DeleteItem = (props: { name: string }) => {
       contentType: 'application/json; charset=utf-8',
       processData: false,
       data: JSON.stringify({
-        Path: '/' + path + '/' + props.name,
-        Host: localStorage.getItem('host'),
-        Username: localStorage.getItem('user'),
-        Password: globalThis.ftpPassword
+        ...getBaseFtpRequest(),
+        Path: '/' + path + '/' + props.name
       })
     })
       .fail(() => {
