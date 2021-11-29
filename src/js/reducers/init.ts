@@ -1,5 +1,6 @@
 export const initGlobals: globals = {
   state: 'CONNECTING',
   error: '',
-  user: null
+  user: null,
+  request: false
 }

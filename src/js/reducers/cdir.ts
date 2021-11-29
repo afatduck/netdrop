@@ -6,6 +6,7 @@ export const cdir = (state: directory[] = null, action: Action<directory[] | dir
     state.push(action.payload)
     return sortDirs([...state])
   }
+  else if (action.type == "UPDATE_LEVEL") { return null }
   return state
 }
 

@@ -1,5 +1,7 @@
 import { Dispatch } from 'redux'
 
+import { filesize } from '../utils'
+
 export const updateError = (msg: string) =>
   (dispatch: Dispatch) => {
     dispatch({
@@ -40,10 +42,27 @@ export const updatePath = (f: string | 0 | -1) =>
     })
   }
 
-export const updateProgress = (f: string | number | progress | null) =>
+export const updateProgress = (f: string | [number, number] | null) =>
   (dispatch: Dispatch) => {
     dispatch({
       type: 'UPDATE_PROGRESS',
-      payload: f
+      payload: Array.isArray(f) ? [f[0], filesize(f[1])] : f
+    })
+  }
+
+export const requestSwitch = () =>
+  (dispatch: Dispatch) => {
+    dispatch({
+      type: "REQUEST_SWITCH",
+      payload: null
+    })
+  }
+
+
+export const updateItemMenu = (payload: itemMenu) =>
+  (dispatch: Dispatch) => {
+    dispatch({
+      type: "UPDATE_ITEMMENU",
+      payload: payload
     })
   }

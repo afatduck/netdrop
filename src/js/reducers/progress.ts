@@ -1,20 +1,28 @@
-export const progress = (state: progress = null, action: Action<number | string | progress | null>): progress => {
+export const progress = (state: progress = null, action: Action<string | [number, string] | null>): progress => {
   if (action.type == "UPDATE_PROGRESS") {
-    switch (typeof action.payload) {
 
-      case 'number':
-        state.percentage = action.payload
-        return { ...state }
+    if (state == null) {
+      state = {
+        title: '',
+        speed: '',
+        percentage: 0
+      }
+    }
+
+    switch (typeof action.payload) {
 
       case 'string':
         state.title = action.payload
+        state.percentage = 0
+        state.speed = ""
         return { ...state }
 
       case 'object':
-        return action.payload
+        if (!action.payload) { return null }
+        state.percentage = action.payload[0]
+        state.speed = action.payload[1]
+        return { ...state }
 
-      default:
-        return null
     }
   }
   return state

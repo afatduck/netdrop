@@ -1,4 +1,5 @@
 import { store } from '../store'
+import { filesize } from '../utils'
 
 export const updateError = (payload: string) => {
   store.dispatch({
@@ -7,10 +8,10 @@ export const updateError = (payload: string) => {
   })
 }
 
-export const updateProgress = (payload: string | number | progress | null) => {
+export const updateProgress = (payload: string | [number, number] | null) => {
   store.dispatch({
     type: "UPDATE_PROGRESS",
-    payload: payload
+    payload: Array.isArray(payload) ? [payload[0], filesize(payload[1])] : payload
   })
 }
 
@@ -25,5 +26,19 @@ export const updateLevel = (payload: states) => {
   store.dispatch({
     type: "UPDATE_LEVEL",
     payload: payload
+  })
+}
+
+export const updatePath = (payload: string | 0 | -1) => {
+  store.dispatch({
+    type: "UPDATE_PATH",
+    payload: payload
+  })
+}
+
+export const requestSwitch = () => {
+  store.dispatch({
+    type: "REQUEST_SWITCH",
+    payload: null
   })
 }

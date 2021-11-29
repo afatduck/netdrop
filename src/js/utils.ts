@@ -11,6 +11,8 @@ const bytes: string[] = ['B', 'KB', 'MB', 'GB']
 
 export const filesize = (s: number): string => {
 
+  if (s == 0) { return "" }
+
   for (let b of bytes) {
     if (b == 'GB' || s < 1024) { return Math.round(s * 10) / 10 + b }
     s /= 1024

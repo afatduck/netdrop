@@ -64,16 +64,14 @@ export const Account = () => {
   }, [])
 
   return (
-    <div className="d-flex align-items-center">
+    <div className="column" id="nav-account">
       {form ? <AccountForm close={setForm} /> : null}
-      {user ? `Logged in as: ${user.username}` : `Not logged in.`}
+      <span className="mr-3">{user ? `Logged in as: ${user.username}` : `Not logged in.`}</span>
       {
         loading ?
-          <div className="spinner-border spinner-border-sm ml-2 mr-2" role="status">
-            <span className="sr-only"></span>
-          </div>
+          <div className="loader" />
           :
-          <button type='button' className="btn btn-outline-primary btn-sm ml-2" onClick={handleButton}>{user ? "Sign out" : "Sign in"}</button>
+          <button type='button' className="button-small" onClick={handleButton}>{user ? "Sign out" : "Sign in"}</button>
       }
     </div>
   )

@@ -8,10 +8,13 @@ export const ProgressOverlay = () => {
   return (
     progress != null ?
       <div className="progressOverlay">
-        <div className="container-xl bg-light d-flex flex-column align-content-center m-6">
-          <h2 className="text-center m-4">{progress.title}</h2>
-          <div className="m-4">
-            <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: progress.percentage + "%" }}>{progress.percentage}%</div>
+        <div className="progress-bg ml-auto mr-auto">
+          <h2 className="mb-3">{progress.title}</h2>
+          <p className="mt-4">{progress.speed ? progress.speed + "/s" : ''}</p>
+          <div className="progress">
+            <div className="bar" style={{ width: progress.percentage + "%" }}>
+              <span>{progress.percentage}%</span>
+            </div>
           </div>
         </div>
       </div> : null

@@ -1,24 +1,36 @@
 import * as StoreActions from '../actions/store-actions'
 
 import { store } from '../store'
-
+import { listdir } from './listdir'
 import { getBaseFtpRequest } from '../utils'
 
 export const uploadFiles = (files: Files[] | FileList) => {
 
   const path = store.getState().path
 
-  const { updateError, updateProgress, updateCdir, updateLevel } = StoreActions
+  const { updateError, updateProgress, updateLevel } = StoreActions
 
   if (!files.length) { return }
 
   let pass: boolean = false
+  let fname: string
 
   let fd: FormData = new FormData()
   for (let i = 0; i < files.length; i++) {
     if (!files[i].size) { continue }
     pass = true
-    fd.append('files', files[i], (files[i] as Files).path.replace("/", '') || files[i].name)
+
+    if (files[i]["path"]) {
+      fname = files[i]["path"].replace("/", '')
+    }
+    else if (files[i]["webkitRelativePath"]) {
+      fname = files[i]["webkitRelativePath"]
+    }
+    else {
+      fname = files[i].name
+    }
+
+    fd.append('files', files[i], fname)
   }
 
   if (!pass) {
@@ -30,24 +42,30 @@ export const uploadFiles = (files: Files[] | FileList) => {
     Path: path.substr(1),
     ...getBaseFtpRequest()
   }))
-  updateProgress({
-    title: 'Uploading files...',
-    percentage: 0
-  })
+  updateProgress("Uploading Files")
   $.ajax({
     xhr: () => {
+
+      let stopwatch: number = performance.now()
+      let lastLoaded: number = 0
+
       const xhr = new window.XMLHttpRequest();
-      xhr.upload.addEventListener("progress", function(evt) {
-        if (evt.lengthComputable) {
-          let percentComplete = Math.trunc((evt.loaded / evt.total) * 100);
+      xhr.upload.addEventListener("progress", function(e) {
+
+        if (e.lengthComputable) {
+
+          const percentComplete = Math.trunc((e.loaded / e.total) * 100);
           if (percentComplete == 100) {
-            updateProgress({
-              title: 'Copying files...',
-              percentage: 101
-            })
+            updateProgress("Copying Files...")
           }
-          updateProgress(percentComplete)
+
+          updateProgress([percentComplete, (e.loaded - lastLoaded) / ((performance.now() - stopwatch) / 1000)])
+
+          stopwatch = performance.now()
+          lastLoaded = e.loaded
+
         }
+
       }, false);
       return xhr;
     },
@@ -69,53 +87,28 @@ export const uploadFiles = (files: Files[] | FileList) => {
       }
 
       let interval: ReturnType<typeof setInterval>
-      updateProgress({
-        title: 'Transfering files...',
-        percentage: 0
-      })
+      updateProgress("Transfering Files")
       interval = setInterval(() => {
         $.ajax({
-          url: globalThis.apiLocation + 'checkupload',
+          url: globalThis.apiLocation + 'uploadprogress',
           type: 'POST',
           contentType: 'application/json; charset=utf-8',
           processData: false,
           data: JSON.stringify(data.code)
         })
-          .done((percentage: number) => {
+          .done((progress: ProgressResponse) => {
 
-            if (percentage == -1 || percentage == 100) {
+            if (progress.done == -1 || progress.done == 100) {
               clearInterval(interval)
               updateProgress(null)
-              updateError(percentage == -1 ? 'Something went wrong.' : '')
+              updateError(progress.done == -1 ? 'Something went wrong.' : '')
 
-              $.ajax(
-                globalThis.apiLocation + 'listdir',
-                {
-                  type: "POST",
-                  data: JSON.stringify({
-                    ...getBaseFtpRequest(),
-                    Path: path.substr(1)
-                  }),
-                  processData: false,
-                  contentType: 'application/json; charset=utf-8'
-                })
-                .done((data: ListDirRespone) => {
-                  if (!data.result) {
-                    updateError(data.errors[0])
-                    return
-                  }
-                  updateCdir(data.dirList)
-                  $('#dirlist')[0].scrollTop = 0
-                })
-                .fail(() => {
-                  updateLevel("CONNECTING")
-                  clearInterval(interval)
-                })
+              listdir()
 
               return
             }
 
-            updateProgress(percentage)
+            updateProgress([progress.done, progress.speed])
 
           })
       }, 750)

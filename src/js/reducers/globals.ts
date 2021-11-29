@@ -2,6 +2,10 @@ export const globals = (state: globals = null, action: Action<string | states | 
 
   switch (action.type) {
 
+    case 'REQUEST_SWITCH':
+      state.request = !state.request
+      return { ...state }
+
     case 'UPDATE_ERROR':
       state.error = (action.payload as string)
       return { ...state }
@@ -9,6 +13,7 @@ export const globals = (state: globals = null, action: Action<string | states | 
     case 'UPDATE_LEVEL':
       if (state.state == action.payload || action.payload == '') { return state }
       state.state = action.payload as states
+      state.error = ""
       return { ...state }
 
     case 'UPDATE_USER':

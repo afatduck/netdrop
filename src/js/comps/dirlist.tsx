@@ -8,19 +8,16 @@ import * as ActionCreators from '../actions'
 
 import { filesize, pathChange, getBaseFtpRequest } from '../utils'
 import { uploadFiles } from './uploadfiles'
+import { listdir } from './listdir'
 
-import { Rename } from './rename'
-import { DeleteItem } from './delete'
-import { UploadFile } from './upload'
-import { ProgressOverlay } from './progress'
-import { CreateDir } from './createdir'
+import { AddTab } from './add'
 
 export const DirList = () => {
 
-  const { cdir, path } = useSelector((state: RootState) => state)
+  const { cdir, path, globals } = useSelector((state: RootState) => state)
 
   const dispatch = useDispatch()
-  const { updatePath, updateCdir, updateError, updateProgress, updateLevel } = bindActionCreators(ActionCreators, dispatch)
+  const { updateError, updateProgress, updateLevel, updateItemMenu } = bindActionCreators(ActionCreators, dispatch)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     uploadFiles((acceptedFiles as Files[]))
@@ -36,28 +33,7 @@ export const DirList = () => {
 
     let newPath: string | 0 = e.currentTarget.getAttribute('data-dir')
 
-    $.ajax(
-      globalThis.apiLocation + 'listdir',
-      {
-        type: "POST",
-        data: JSON.stringify({
-          ...getBaseFtpRequest(),
-          Path: pathChange(path, newPath).substr(2)
-        }),
-        processData: false,
-        contentType: 'application/json; charset=utf-8'
-      })
-      .done((data: ListDirRespone) => {
-        if (!data.result) {
-          updateError(data.errors[0])
-          return
-        }
-        updatePath(newPath)
-        updateCdir(data.dirList)
-        updateError('')
-        $('#dirlist')[0].scrollTop = 0
-      })
-      .fail(() => { updateLevel("CONNECTING") })
+    listdir(pathChange(path, newPath).substr(2))
 
   }
 
@@ -65,7 +41,6 @@ export const DirList = () => {
 
     let getFile: string = e.currentTarget.getAttribute('data-dir')
     let fpath: string
-    let fsize: number
     let mime: string
     let intervalID: ReturnType<typeof setInterval>
 
@@ -88,17 +63,13 @@ export const DirList = () => {
 
         updateError('')
         fpath = data.url
-        fsize = data.size
         mime = data.mime
 
-        updateProgress({
-          title: "Getting File",
-          percentage: 0
-        })
+        updateProgress("Getting File")
 
         intervalID = setInterval(() => {
           $.ajax(
-            globalThis.apiLocation + 'progress',
+            globalThis.apiLocation + 'downloadprogress',
             {
               type: 'POST',
               contentType: "application/json; charset=utf-8",
@@ -109,33 +80,42 @@ export const DirList = () => {
 
               if (!data.result) {
                 updateError("Failed to get file.")
+                updateProgress(null)
                 clearInterval(intervalID)
                 return
               }
 
-              updateProgress(Math.round(data.done / fsize * 100))
+              updateProgress([data.done, data.speed])
 
-              if (data.done == fsize) {
+              if (data.done == 100) {
 
                 clearInterval(intervalID)
-                updateProgress({
-                  title: "Downloading File",
-                  percentage: 0
-                })
+                updateProgress("Downloading File")
+
+                let stopwatch: number = performance.now()
+                let lastLoaded: number = 0
 
                 let req = new XMLHttpRequest();
 
                 req.addEventListener('progress', (e: ProgressEvent<XMLHttpRequestEventTarget>) => {
+
                   try {
-                    updateProgress(Math.round(e.loaded / e.total * 100))
+                    updateProgress([Math.round(e.loaded / e.total * 100), (e.loaded - lastLoaded) / ((performance.now() - stopwatch) / 1000)])
                   } catch { }
-                  if (e.loaded == e.total) {
+
+                  stopwatch = performance.now()
+                  lastLoaded = e.loaded
+
+                })
+
+                req.onreadystatechange = () => {
+                  if (req.readyState === 4) {
                     setTimeout(() => {
                       download(req.response, getFile, mime)
                     }, 0)
                     updateProgress(null)
                   }
-                })
+                }
 
                 req.responseType = 'blob'
                 req.open('get', globalThis.apiLocation + fpath)
@@ -157,48 +137,70 @@ export const DirList = () => {
       })
       .fail(() => { updateLevel("CONNECTING") })
 
+  }
 
+  const handleRightClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (globals.request) { return }
+    const index: number = parseInt(e.currentTarget.getAttribute("data-id"))
+    updateItemMenu({
+      x: e.clientX,
+      y: e.clientY,
+      item: cdir[index]
+    })
   }
 
   let items: JSX.Element[] = path == '.' ? [] : [
-    <li
-      className={'list-group-item list-group-item-action d-flex justify-content-between align-items-center list-group-item-info'}
+    <tr
+      className={'dir-item'}
       data-dir={0}
       onClick={handleFolder}
       style={{ cursor: 'pointer' }}>
-      <span>..</span>
-      <span className='badge badge-secondary'>Parent Dir</span>
-    </li>
+      <td>..</td><td /><td />
+    </tr>
   ]
+
+  let i: number = 0
 
   for (let c of cdir) {
     items.push(
-      <li
-        className={'list-group-item list-group-item-action d-flex justify-content-between align-items-center' + (c.type == 'dir' ? ' list-group-item-info' : '')}
+      <tr
+        className={'dir-item'}
         data-dir={c.name}
+        data-id={i}
         onClick={c.type == 'dir' ? handleFolder : handleFile}
+        onContextMenu={handleRightClick}
         style={{ cursor: 'pointer' }}>
-        <Rename name={c.name} key={new Date().getTime()} />
-        {c.type == 'file' ? <span style={{ margin: "0 1em 0 auto" }}>{filesize(parseInt(c.size))}</span> : ''}
-        <span className='badge badge-secondary' style={c.type == 'dir' ? { marginLeft: 'auto' } : {}}>{c.modify}</span>
-        <DeleteItem name={c.name} key={'d' + new Date().getTime()} />
-      </li>
+        <td>{c.name}</td>
+        <td>{c.type == "file" ? filesize(parseInt(c.size)) || "0B" : "-"}</td>
+        <td>{c.modify}</td>
+      </tr>
     )
+    i++
   }
 
   return (
-    <div className="mt-4">
-      <div className="d-flex">
-        <UploadFile key="uf" />
-        <CreateDir key="cd" />
+    <div className="mt-4 dir-root">
+      <AddTab />
+      <div className="hold-table">
+        <div {...getRootProps({ className: "dropzone-root" })}><h3>DROP HERE TO UPLOAD</h3></div>
+        <section>
+          <table className="dir-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Modify</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items}
+            </tbody>
+          </table>
+        </section>
       </div>
-      <ul className='mt-1 list-group' id="dirlist" >
-        <div {...getRootProps({ className: "dropzone-root" })}><h2>DROP HERE TO UPLOAD</h2></div>
-        {items}
-        <ProgressOverlay />
-      </ul>
-      <span>{path}</span>
-      <input {...getInputProps({ className: "d-hidden", onClick: e => e.preventDefault() })} />
+      <blockquote><em>{path.substr(1)}</em></blockquote>
+      <input {...getInputProps({ onClick: e => e.preventDefault() })} />
     </div>
   )
 

@@ -80,7 +80,7 @@ export const AccountForm = (props: { close: React.Dispatch<React.SetStateAction<
 
   return (
     <div className="overlay">
-      <form className="bg-white" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <i className="fas fa-times" onClick={() => { props.close(false) }} />
         <div className="form-group">
           <label htmlFor="account_username_input">Username:</label>
@@ -99,16 +99,14 @@ export const AccountForm = (props: { close: React.Dispatch<React.SetStateAction<
         }
         {
           action == "Sign In" ?
-            <button type="button" className="btn btn-outline-info btn-sm ml-auto d-block mb-2" onClick={() => { setAction("Sign Up") }}>Don't have an account.</button>
+            <button type="button" className="button-small black ml-auto mb-2" onClick={() => { setAction("Sign Up") }}>Don't have an account.</button>
             :
-            <button type="button" className="btn btn-outline-info btn-sm ml-auto d-block mb-2" onClick={() => { setAction("Sign In") }}>Already have an account.</button>
+            <button type="button" className="button-small black ml-auto mb-2" onClick={() => { setAction("Sign In") }}>Already have an account.</button>
         }
-        <p className="text-danger">{error}</p>
+        <p className="text-error">{error}</p>
         {
           loading ?
-            <div className="spinner-border spinner-border-sm" role="status">
-              <span className="sr-only"></span>
-            </div>
+            <div className="loader ml-auto mr-auto" />
             :
             <button type="submit" id="account_button" className="btn btn-primary">{action}</button>
         }

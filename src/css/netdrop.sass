@@ -1,44 +1,153 @@
+@use "comps/var"
+@use "comps/inherit"
+@use "comps/extend_milligram"
+@use "comps/mp"
+@use "comps/loader"
+@use "comps/browser"
+@use "comps/overlays"
+
+html
+  min-height: 100vh
+
+body
+  background-color: var(--main-bg-color)
+  color: var(--main-color)
+  margin: 0
+  width: 100vw
+  overflow-x: hidden
+
 #dirlist
   max-height: 40vh
   overflow-y: scroll
   position: relative
 
-.progressOverlay, .overlay
-   position: fixed
-   width: 100vw
-   height: 100vh
-   box-sizing: border-box
-   padding: 35vh 10vw
-   background-color: rgba(128, 128, 128, 0.4)
-   top: 0
-   left: 0
-   z-index: 3
-
-.overlay
-  display: flex
+#add-tab
   align-items: center
-  justify-content: center
-  flex-direction: column
-  padding: 0
-  form
-    width: 50%
-    box-sizing: border-box
-    padding: 2em
-    border-radius: 10px
+  display: flex
+
+  .button-small
+    align-self: flex-end
+
+nav
+  align-items: center
+
+#nav-account, #login-column
+  display: flex
+  justify-content: flex-end
+  align-items: center
+
+#theme-button
+  position: absolute
+  bottom: 1rem
+  right: 1rem
+
+.text-error
+  color: red !important
+
+.text-center
+  text-align: center
+
+.block
+  display: block
+
+input[type="checkbox"]
+  width: 0.9em
+  height: 0.9em
+  vertical-align: bottom
+  cursor: pointer
+
+label
+  cursor: pointer
+  user-select: none
+
+input
+  color: var(--main-color)
+
+.dropdown
+  position: relative
+
+  section
+    background-color: var(--main-color)
+    position: absolute
+    top: 4.2rem
+    right: 0
+    border-radius: 0.5rem
+    overflow: hidden
+
+    div
+      padding: 1rem 2rem
+      p
+        margin: 1em 0
+        display: block
+
+    div:hover
+      background-color: var(--secondary-color)
+
+.dir-table
+  width: 100%
+  margin: 0
+  position: relative
+
+  tr:last-child td
+    border: none
+
+.hold-table
+  position: relative
+  display: block
+  width: 100%
+  margin-bottom: 1rem
+  border-radius: 0.5rem
+  overflow: hidden
+
+  section
     position: relative
-    i
-      position: absolute
-      top: 1em
-      right: 1em
-      cursor: pointer
+    overflow-y: scroll
+    -ms-overflow-style: none
+    scrollbar-width: none
+    max-height: 50vh
+    background-color: var(--main-bg-color)
+
+.hold-table section::-webkit-scrollbar
+  display: none
+
+.dir-root
+  box-sizing: border-box
+  padding: 0 2rem
 
 .dropzone-root
   height: 100%
   position: absolute
   z-index: -1
   width: 100%
-  background-color: rgba(128, 128, 128, 0.5)
+  background-color: var(--secondary-bg-color)
   border-radius: 0.25rem
   display: flex
   justify-content: center
   align-items: center
+
+  h3
+    line-height: 0
+
+.dir-item:hover
+  background-color: var(--secondary-bg-color)
+
+input[type="file"]
+  display: none
+
+#item-menu
+  position: absolute
+  border-radius: 0.25rem
+  background-color: var(--main-bg-color)
+  box-shadow: 0 0 0.5rem var(--secondary-bg-color)
+  overflow: hidden
+
+  h5
+    text-align: center
+    padding: 1rem 4rem
+    margin-bottom: 1rem
+    min-width: 12vw
+
+  button
+    width: 100%
+    border-radius: 0
+    display: block

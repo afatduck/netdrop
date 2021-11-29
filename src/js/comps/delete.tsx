@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
@@ -6,16 +6,16 @@ import { getBaseFtpRequest } from '../utils'
 
 import * as ActionCreators from '../actions'
 
-export const DeleteItem = (props: { name: string }) => {
+export const DeleteItem = (props: { name: string, setLoading: React.Dispatch<React.SetStateAction<boolean>> }) => {
+
+  const { name, setLoading } = props
 
   const { path, cdir } = useSelector((state: RootState) => state)
 
   const dispatch = useDispatch()
-  const { updateError, updateCdir, updateLevel } = bindActionCreators(ActionCreators, dispatch)
+  const { updateError, updateCdir, updateLevel, updateItemMenu } = bindActionCreators(ActionCreators, dispatch)
 
-  const [loading, setLoading]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
-
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     setLoading(true)
     $.ajax({
@@ -25,7 +25,7 @@ export const DeleteItem = (props: { name: string }) => {
       processData: false,
       data: JSON.stringify({
         ...getBaseFtpRequest(),
-        Path: '/' + path + '/' + props.name
+        Path: path.substr(2) + '/' + name
       })
     })
       .fail(() => {
@@ -33,22 +33,16 @@ export const DeleteItem = (props: { name: string }) => {
       })
       .done((data: BaseResponse) => {
         setLoading(false)
+        updateItemMenu(null)
         if (!data.result) {
           updateError(data.errors[0])
           return
         }
-        updateCdir(cdir.filter((c: directory) => c.name != props.name))
+        updateCdir(cdir.filter((c: directory) => c.name != name))
         updateError('')
       })
   }
 
-  return (
-    loading ?
-      <div className="spinner-border spinner-border-sm ml-4" role="status">
-        <span className="sr-only"></span>
-      </div>
-      :
-      <i className="fas fa-trash ml-4" onClick={handleClick}></i>
-  )
+  return <button type="button" className="button-clear" name="delete" onClick={handleClick}>Delete</button>
 
 }

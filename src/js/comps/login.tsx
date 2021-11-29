@@ -9,11 +9,12 @@ export const LoginForm = () => {
   const userData = useSelector((state: RootState) => state.globals.user)
 
   const dispatch = useDispatch()
-  const { updateLevel, updateCdir, updatePath } = bindActionCreators(ActionCreators, dispatch)
+  const { updateLevel, updateCdir, updatePath, updateItemMenu } = bindActionCreators(ActionCreators, dispatch)
 
   const [loading, setLoading]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const [form, setForm]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const [save, setSave]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
+  const [dropdown, setDropdown]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const [error, setError]: [string, React.Dispatch<React.SetStateAction<string>>] = useState('')
   const [selected, setSelected]: [string, React.Dispatch<React.SetStateAction<string>>] = useState('Saved Connections')
   const [saveName, setSaveName]: [string, React.Dispatch<React.SetStateAction<string>>] = useState('')
@@ -33,6 +34,23 @@ export const LoginForm = () => {
     }
     return true
   }
+
+  useEffect(() => {
+    $(document).click((e: JQuery.ClickEvent) => {
+
+      let container = $(".dropdown");
+      if (!container.is(e.target) && !container.has(e.target).length) {
+        setDropdown(false)
+      }
+
+      container = $("#item-menu");
+      if (!container.is(e.target) && !container.has(e.target).length) {
+        updateItemMenu(null)
+      }
+
+
+    })
+  }, [])
 
   useEffect(() => { setError('') }, [form])
 
@@ -54,7 +72,7 @@ export const LoginForm = () => {
     for (let i in userData.credentials) {
       let cred: Credentials = userData.credentials[i]
       savedCredentials.push(
-        <div className="dropdown-item pt-3" data-id={i} onClick={handleDropdown}>
+        <div data-id={i} onClick={handleDropdown}>
           <p style={{ lineHeight: 0 }}>{cred.name}</p>
           <p style={{ fontSize: "50%", lineHeight: 0 }}>{cred.host}</p>
         </div>
@@ -95,7 +113,7 @@ export const LoginForm = () => {
         Password: input.password,
         Secure: input.secure,
         Port: parseInt(input.port),
-        Path: ""
+        Path: "/"
       })
     })
       .fail(() => {
@@ -183,80 +201,67 @@ export const LoginForm = () => {
   }
 
   return (
-    <div>
-      <button className="btn btn-primary btn-sm mr-5 d-block" type="button" onClick={() => { setForm(true); setSave(false) }}>New Connection</button>
+    <div className="column" id="login-column">
+      <button className="button-small button-highlight ml-auto" type="button" onClick={() => { setForm(true); setSave(false) }}>New Connection</button>
       {(() => {
         if (form) return (
           <div className="overlay">
             {!save ?
 
-
-
-
               <form className="bg-white d-flex flex-column" onSubmit={handleSubmit}>
                 <i className="fas fa-times" onClick={() => { setForm(false) }} />
 
-                <div className="form-group">
+                <div className="">
                   <label htmlFor="ftp_host_input">Host:</label>
-                  <input type="text" className="form-control" name="host" placeholder="Host" id="ftp_host_input" autoComplete="ftphost" value={input.host} onChange={handleChange} />
+                  <input type="text" className="" name="host" placeholder="Host" id="ftp_host_input" autoComplete="ftphost" value={input.host} onChange={handleChange} />
                 </div>
-                <div className="form-group">
-                  <label htmlFor="ftp_username_input">Username:</label>
-                  <input type="text" className="form-control" name="user" placeholder="Username" id="ftp_user_input" autoComplete="ftpuser" value={input.user} onChange={handleChange} />
+                <div className="">
+                  <label htmlFor="ftp_user_input">Username:</label>
+                  <input type="text" className="" name="user" placeholder="Username" id="ftp_user_input" autoComplete="ftpuser" value={input.user} onChange={handleChange} />
                 </div>
-                <div className="form-group">
+                <div className="">
                   <label htmlFor="ftp_password_input">Password:</label>
-                  <input type="password" className="form-control" name="password" placeholder="Password" id="ftp_password_input" autoComplete="ftppassword" value={input.password} onChange={handleChange} />
+                  <input type="password" className="" name="password" placeholder="Password" id="ftp_password_input" autoComplete="ftppassword" value={input.password} onChange={handleChange} />
                 </div>
-                <div className="form-group w-25">
+                <div style={{ width: "25%" }}>
                   <label htmlFor="ftp_port_input">Port:</label>
                   <input type="number" className="form-control" name="port" placeholder="Port" id="ftp_port_input" autoComplete="ftpport" value={input.port} onChange={handleChange} />
                 </div>
-                <div className="form-check">
-                  <input type="checkbox" className="form-check-input" name="secure" id="ftp_secure_check" checked={input.secure} onChange={handleChange} />
-                  <label className="form-check-label" htmlFor="ftp_secure_check">Secure Connection</label>
-                </div>
+                <label className="" htmlFor="ftp_secure_check" style={{ display: 'inline-block', width: "fit-content" }}>Secure Connection
+                  <input type="checkbox" className="m-2" name="secure" id="ftp_secure_check" checked={input.secure} onChange={handleChange} />
+                </label>
 
                 {
                   !userData ? null :
-                    <div className="btn-group mt-2 mb-2 ml-auto">
-                      <button type="button" className="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {selected}</button>
-                      <div className="dropdown-menu">
-                        {savedCredentials}
-                      </div>
-                    </div>
+                    <button type="button" className="dropdown" onClick={() => { setDropdown(!dropdown) }}>
+                      {selected}
+                      <i className={`fas fa-angle-${dropdown ? "down" : "up"} mt-1`} />
+                      <section style={dropdown ? null : { display: "none" }}>{savedCredentials}</section>
+                    </button>
                 }
 
-                <p className="text-danger">{error}</p>
+                <p className="text-error">{error}</p>
                 {
                   loading ?
-                    <div className="spinner-border spinner-border-sm align-self-center" role="status">
-                      <span className="sr-only"></span>
-                    </div>
+                    <div className="loader ml-auto mr-auto" />
                     :
                     <button type="submit" id="login_button" className="btn btn-primary">Connect</button>
                 }
               </form> :
 
-
-
-
-              <form className="bg-white d-flex flex-column" onSubmit={handleSaveSubmit}>
+              <form onSubmit={handleSaveSubmit}>
                 <i className="fas fa-times" onClick={() => { setForm(false) }} />
                 <h2>Save connection?</h2>
-                <div className="form-group">
+                <div>
                   <label htmlFor="ftp_save_input">Connection Name:</label>
-                  <input type="text" className="form-control" name="name" placeholder="Connection Name" id="ftp_name_input" autoComplete="ftpname" value={saveName} onChange={handleSaveChange} />
+                  <input type="text" name="name" placeholder="Connection Name" id="ftp_name_input" autoComplete="ftpname" value={saveName} onChange={handleSaveChange} />
                 </div>
-                <p className="text-danger">{error}</p>
+                <p className="text-error">{error}</p>
                 {
                   loading ?
-                    <div className="spinner-border spinner-border-sm align-self-center" role="status">
-                      <span className="sr-only"></span>
-                    </div>
+                    <div className="loader" />
                     :
-                    <button type="submit" id="save_button" className="btn btn-primary">Save</button>
+                    <button type="submit" id="save_button" className="button-highlight">Save</button>
                 }
               </form>
 

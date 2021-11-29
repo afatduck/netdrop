@@ -9,6 +9,9 @@ import { ContactApi } from './comps/contact'
 import { LoginForm } from './comps/login'
 import { DirList } from './comps/dirlist'
 import { Account } from './comps/account'
+import { ThemeButton } from './comps/theme'
+import { ProgressOverlay } from './comps/progress'
+import { ItemMenu } from './comps/itemmenu'
 
 import * as ActionCreators from './actions'
 
@@ -23,6 +26,8 @@ $(document).ready(() => {
     clearTimeout(dragTimeout)
     dragTimeout = setTimeout(() => { $('.dropzone-root').css("z-index", -1) }, 100)
   })
+
+  $('html').attr("data-theme", localStorage.getItem("theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"))
 
   const App = () => {
 
@@ -41,27 +46,31 @@ $(document).ready(() => {
 
     return (
       <div>
-        <nav className="navbar navbar-extend-sm bg-light">
-          <a className="navbar-brand mr-auto">Netdrop</a>
+        <nav className="row p-4 pt-3">
+
+          <h3 className="column column-50">Netdrop</h3>
 
           {
-            globals.state == "USING" ?
-              <div className="row mr-2">
-                <LoginForm />
-                <Account key={localhost ? 'a' : 'B'} />
-              </div>
-              : null
+            globals.state == "USING" ? <LoginForm /> : null
+
+          }
+          {
+            globals.state == "USING" ? <Account key={localhost ? 'a' : 'B'} /> : null
           }
 
         </nav>
         <section className="container-fluid p-4">
           {(() => { if (globals.state == 'CONNECTING') { return <ContactApi key={localhost ? 'a' : 'B'} /> } })()}
           {globals.state == "CONNECTING" ? null : <DirList />}
-          <h5 className='text-danger mt-3'>{globals.error}</h5>
+          <h5 className='text-error mt-3'>{globals.error}</h5>
           <button type="button" className="btn btn-info btn-sm" onClick={switchApi} >{`Switch to ${localhost ? 'online' : 'localhost'} api`}</button>
           <br />
           <ResetButton />
         </section>
+        <ProgressOverlay />
+        <ThemeButton />
+        <ItemMenu />
+
       </div>
     )
   }

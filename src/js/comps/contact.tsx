@@ -36,9 +36,7 @@ export const ContactApi = () => {
     <div>
       <h3>{loading ? "Connecting to Netdrop API." : "Failed to connect to Netdrop API."}</h3>
       {loading ?
-        <div className="spinner-border" role="status">
-          <span className="sr-only"></span>
-        </div>
+        <div className="loader" />
         :
         <button type="button" className="btn btn-primary btn-sm" onClick={handleButton}>Try Again</button>
       }

@@ -4,6 +4,7 @@ type globals = {
   error: string
   state: states
   user: UserData
+  request: boolean
 }
 
 type RootState = {
@@ -11,6 +12,7 @@ type RootState = {
   cdir: directory[]
   path: string
   progress: progress
+  itemmenu: itemMenu
 }
 
 type creds = {
@@ -26,6 +28,7 @@ type directory = {
   modify: string
   size: string
   type: 'file' | 'dir'
+  mime: string
 }
 
 type filelink = {
@@ -36,6 +39,7 @@ type filelink = {
 type progress = {
   title: string,
   percentage: number
+  speed: string
 }
 
 type Action<T> = {
@@ -84,10 +88,15 @@ interface DownloadFileResponse extends BaseResponse {
 
 interface ProgressResponse extends BaseResponse {
   done: number
+  speed: number
 }
 
 interface UploadResponse extends BaseResponse {
   code: string
+}
+
+interface ImageViewResponse extends BaseResponse {
+  url: string
 }
 
 interface Files extends File {
@@ -100,4 +109,10 @@ interface BaseFtpRequest {
   Password: string
   Secure: boolean
   Port: number
+}
+
+interface itemMenu {
+  x: number
+  y: number
+  item: directory
 }
