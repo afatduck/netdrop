@@ -27,6 +27,7 @@ export const LoginForm = () => {
   })
 
   const checkIfDifferent = () => {
+    if (!userData) { return false }
     for (let cred of userData.credentials) {
       if (cred.host == input.host && cred.password == input.password && cred.username == input.user && input.port == cred.port.toString()) {
         return false
@@ -104,7 +105,6 @@ export const LoginForm = () => {
     $.ajax({
       url: globalThis.apiLocation + "listdir",
       type: "post",
-      timeout: 2e4,
       contentType: 'application/json; charset=utf-8',
       processData: false,
       data: JSON.stringify({
@@ -150,6 +150,10 @@ export const LoginForm = () => {
     e.preventDefault()
     if (!saveName) {
       setError("A name is required.")
+      return
+    }
+    if (saveName == "Saved Connections") {
+      setError("Not this one.")
       return
     }
     for (let cred of userData.credentials) {
@@ -201,7 +205,7 @@ export const LoginForm = () => {
   }
 
   return (
-    <div className="column" id="login-column">
+    <div id="nav-login">
       <button className="button-small button-highlight ml-auto" type="button" onClick={() => { setForm(true); setSave(false) }}>New Connection</button>
       {(() => {
         if (form) return (
@@ -227,7 +231,7 @@ export const LoginForm = () => {
                   <label htmlFor="ftp_port_input">Port:</label>
                   <input type="number" className="form-control" name="port" placeholder="Port" id="ftp_port_input" autoComplete="ftpport" value={input.port} onChange={handleChange} />
                 </div>
-                <label className="" htmlFor="ftp_secure_check" style={{ display: 'inline-block', width: "fit-content" }}>Secure Connection
+                <label className="" htmlFor="ftp_secure_check" style={{ display: 'inline-block', width: "fit-content" }}>Implicit FTPS
                   <input type="checkbox" className="m-2" name="secure" id="ftp_secure_check" checked={input.secure} onChange={handleChange} />
                 </label>
 
@@ -240,7 +244,7 @@ export const LoginForm = () => {
                     </button>
                 }
 
-                <p className="text-error">{error}</p>
+                <p className="text-error mt-3">{error}</p>
                 {
                   loading ?
                     <div className="loader ml-auto mr-auto" />

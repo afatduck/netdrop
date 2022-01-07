@@ -11,6 +11,7 @@ type RootState = {
   globals: globals
   cdir: directory[]
   path: string
+  movePath: string
   progress: progress
   itemmenu: itemMenu
 }
@@ -67,6 +68,10 @@ type LoginInput = {
   repeat: string
 }
 
+type ProfileRequests = "DEL" | "CUN" | "CPW"
+
+type GuideState = number | "done"
+
 interface BaseResponse {
   result: boolean
   errors: string[]
@@ -89,13 +94,14 @@ interface DownloadFileResponse extends BaseResponse {
 interface ProgressResponse extends BaseResponse {
   done: number
   speed: number
+  complete: boolean
 }
 
 interface UploadResponse extends BaseResponse {
   code: string
 }
 
-interface ImageViewResponse extends BaseResponse {
+interface ViewResponse extends BaseResponse {
   url: string
 }
 
@@ -115,4 +121,14 @@ interface itemMenu {
   x: number
   y: number
   item: directory
+}
+
+interface TextTheme {
+  name: string
+  id: string
+}
+
+interface ProfileInput {
+  new: string
+  cpwd: string
 }

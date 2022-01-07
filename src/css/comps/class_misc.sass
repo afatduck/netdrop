@@ -1,0 +1,60 @@
+.text-error
+  color: red !important
+  white-space: pre-line
+
+.text-center
+  text-align: center
+
+.block
+  display: block
+
+.center
+  margin-left: auto
+  margin-right: auto
+
+.dropdown
+  position: relative
+
+  [class*="fa-angle"]
+    transform: translate(1rem, 0)
+
+  section
+    background-color: var(--main-color)
+    position: absolute
+    top: calc(100% + 1rem)
+    right: 0
+    border-radius: 0.5rem
+    overflow: hidden
+
+    div
+      padding: 1rem 2rem
+      p
+        word-break: break-all
+        margin: 1em 0
+        display: block
+
+    div:hover
+      background-color: var(--secondary-color)
+
+
+.dropzone-root
+  height: 100%
+  position: absolute
+  z-index: -1
+  width: 100%
+  background-color: var(--secondary-bg-color)
+  border-radius: 0.25rem
+  display: flex
+  justify-content: center
+  align-items: center
+
+  h3
+    line-height: 0
+
+.dir-item:hover
+  background-color: var(--secondary-bg-color)
+
+.guide-highligh
+  z-index: 4
+  pointer-events: none !important
+  background-color: inherit

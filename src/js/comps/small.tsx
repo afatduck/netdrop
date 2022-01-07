@@ -8,7 +8,7 @@ export const ResetButton = () => {
   }
 
   return (
-    <button onClick={handleClick} name="reset" className="btn btn-sm btn-warning mt-5">Reset</button>
+    <button onClick={handleClick} name="reset" className="button-small">Reset</button>
   )
 
 }

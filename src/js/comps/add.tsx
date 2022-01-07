@@ -4,6 +4,8 @@ import { bindActionCreators } from 'redux'
 
 import * as ActionCreators from '../actions'
 
+import { MoveButton } from './move'
+
 import { getBaseFtpRequest } from '../utils'
 import { listdir } from './listdir'
 import { uploadFiles } from './uploadfiles'
@@ -74,7 +76,8 @@ export const AddTab = () => {
   return (
     <div id="add-tab">
       <div className="loader" style={{ display: (request ? "block" : "none") }} />
-      <button className="button-small ml-auto mr-2" onClick={() => { listdir() }} >Refresh</button>
+      <MoveButton />
+      <button className="button-small mr-2" onClick={() => { listdir() }} >Refresh</button>
       <button className="button-small" onClick={() => { setOpen(true) }}>Add +</button>
       {
         open ?
@@ -88,10 +91,10 @@ export const AddTab = () => {
                   <input id="new-item-input" type="text" value={input} onChange={handleChange} />
                 </div>
                 {
-                  loading ? <div className="loader ml-auto mr-auto"></div> :
+                  loading ? <div className="loader center mt-3"></div> :
                     <div className="buttons">
-                      <button type="button" name="createfile" className="button-highlight" disabled={input == ""} onClick={handleCreate}>Empty File</button>
-                      <button type="button" name="createdir" className="button-highlight" disabled={input == ""} onClick={handleCreate}>Directory</button>
+                      <button type="button" name="createfile" className="button-outline" disabled={input == ""} onClick={handleCreate}>Empty File</button>
+                      <button type="button" name="createdir" className="button-outline" disabled={input == ""} onClick={handleCreate}>Directory</button>
                     </div>
                 }
               </form>

@@ -14,3 +14,22 @@
       --main-bg-color: #f8f8f8
       --secondary-color: #181818
       --secondary-bg-color: #e8e8e8
+
+      #guide-inner
+        img
+          filter: invert(1)
+
+      .overlay--strong
+        background-color: #eeeb
+
+
+[data-loaded]
+
+  *:not(body, tr, .dropdown div, #item-menu button, .bar, input, button:hover, .button-clear)
+    transition: background-color 1s
+
+  body
+    transition: background-color 1s, color 1s
+
+  button:not(#item-menu button, button:hover, .button-clear)
+    transition: color 1s, background-color 1s, border-color 1s

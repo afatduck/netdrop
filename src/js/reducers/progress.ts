@@ -1,4 +1,4 @@
-export const progress = (state: progress = null, action: Action<string | [number, string] | null>): progress => {
+export const progress = (state: progress = null, action: Action<string | [number, string] | null | states>): progress => {
   if (action.type == "UPDATE_PROGRESS") {
 
     if (state == null) {
@@ -25,5 +25,10 @@ export const progress = (state: progress = null, action: Action<string | [number
 
     }
   }
+
+  if (action.type == "UPDATE_LEVEL" && action.payload == "CONNECTING") {
+    return null
+  }
+
   return state
 }

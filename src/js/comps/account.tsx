@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import { AccountForm } from './accountform'
+import { ProfileOverlay } from './profile'
 import * as ActionCreators from '../actions'
 
 export const Account = () => {
@@ -64,14 +65,14 @@ export const Account = () => {
   }, [])
 
   return (
-    <div className="column" id="nav-account">
+    <div id="nav-account">
       {form ? <AccountForm close={setForm} /> : null}
-      <span className="mr-3">{user ? `Logged in as: ${user.username}` : `Not logged in.`}</span>
+      <span className="mr-3">{user ? <ProfileOverlay /> : `Not logged in`}</span>
       {
         loading ?
           <div className="loader" />
           :
-          <button type='button' className="button-small" onClick={handleButton}>{user ? "Sign out" : "Sign in"}</button>
+          <button type='button' className="button-small button-outline" onClick={handleButton}>{user ? "Sign out" : "Sign in"}</button>
       }
     </div>
   )

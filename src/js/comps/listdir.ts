@@ -31,7 +31,7 @@ export const listdir = (path: string = store.getState().path) => {
       updateCdir(data.dirList)
       updateError('')
       if (path != p) {
-        $('.hold-table section')[0].scrollTop = 0
+        $('#hold-table section')[0].scrollTop = 0
         updatePath(p.length > path.length ? 0 : path.substr(path.lastIndexOf('/') + 1))
       }
     })

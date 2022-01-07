@@ -1,0 +1,105 @@
+#contact
+  margin-top: 10vh
+  max-width: 600px
+  .loader
+    font-size: 3rem
+    border-width: medium
+  ul
+    text-align: left
+    color: var(--secondary-color)
+    li::marker
+      color: var(--main-ovca)
+      font-weight: 100
+
+#dirlist
+  max-height: 40vh
+  overflow-y: scroll
+  position: relative
+
+#add-tab
+  align-items: center
+  display: flex
+
+  .button-small
+    align-self: flex-end
+
+#nav-account, #login-column
+  display: flex
+  justify-content: flex-end
+  align-items: center
+
+#theme-button
+  position: absolute
+  bottom: 2rem
+  right: 2rem
+  font-size: 3rem
+  cursor: pointer
+
+#item-menu
+  position: absolute
+  border-radius: 0.25rem
+  background-color: var(--main-bg-color)
+  box-shadow: 0 0 0.5rem var(--secondary-bg-color)
+  overflow: hidden
+
+  h5
+    text-align: center
+    padding: 1rem 4rem
+    margin-bottom: 1rem
+    min-width: 12vw
+
+  button:not(.hold-buttons button)
+    width: 100%
+    border-radius: 0
+    display: block
+
+#dev-buttons
+  position: absolute
+  bottom: 1rem
+  left: 1rem
+  button
+    display: block
+  button:last-child
+    margin-top: 1rem
+  p
+    margin: 0
+
+#dir-root
+  margin-top: 5vw
+
+  #hold-table
+    position: relative
+    display: block
+    width: 100%
+    margin: 1rem 0
+    border-radius: 0.5rem
+    overflow: hidden
+
+    section
+      position: relative
+      overflow-y: scroll
+      -ms-overflow-style: none
+      scrollbar-width: none
+      max-height: 50vh
+      background-color: var(--main-bg-color)
+
+  #dir-table
+    width: 100%
+    max-width: 100%
+    margin: 0
+    position: relative
+    display: table
+    word-break: break-all
+
+    tr:last-child td
+      border: none
+
+  section::-webkit-scrollbar
+    display: none
+
+#no-connection
+  text-align: center
+  margin-top: 10vh
+
+#username span
+  cursor: pointer

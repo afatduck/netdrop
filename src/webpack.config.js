@@ -11,15 +11,17 @@ module.exports = {
     'react': 'React',
     'react-dom': 'ReactDOM',
     'redux': 'Redux',
-    'react-redux': 'ReactRedux'
+    'react-redux': 'ReactRedux',
+    'highlight.js': 'hljs',
+    '@popperjs/core': "Popper"
   },
   resolve: {
-    extensions: ['.tsx', '.js', '.ts']
+    extensions: ['.tsx', '.js', '.ts', '.json']
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx|ts|tsx|json)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',

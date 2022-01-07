@@ -1,0 +1,23 @@
+[
+
+  {
+    "id": "default",
+    "name": "Default"
+  },
+
+  {
+    "id": "atom-one-dark",
+    "name": "Atom One Dark"
+  },
+
+  {
+    "id": "atom-one-light",
+    "name": "Atom One Light"
+  },
+
+  {
+    "id": "vs-code",
+    "name": "VS Code"
+  }
+   
+]

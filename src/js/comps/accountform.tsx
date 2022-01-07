@@ -82,33 +82,33 @@ export const AccountForm = (props: { close: React.Dispatch<React.SetStateAction<
     <div className="overlay">
       <form onSubmit={handleSubmit}>
         <i className="fas fa-times" onClick={() => { props.close(false) }} />
-        <div className="form-group">
+        <div>
           <label htmlFor="account_username_input">Username:</label>
-          <input type="text" className="form-control" name="user" placeholder="Username" id="account_user_input" value={input.user} onChange={handleChange} />
+          <input type="text" name="user" placeholder="Username" id="account_user_input" value={input.user} onChange={handleChange} />
         </div>
-        <div className="form-group">
+        <div>
           <label htmlFor="account_password_input">Password:</label>
-          <input type="password" className="form-control" name="password" placeholder="Password" id="account_password_input" value={input.password} onChange={handleChange} />
+          <input type="password" name="password" placeholder="Password" id="account_password_input" value={input.password} onChange={handleChange} />
         </div>
         {action == "Sign In" ?
           null :
-          <div className="form-group">
+          <div>
             <label htmlFor="account_repeat_input">Repeat Password:</label>
-            <input type="password" className="form-control" name="repeat" placeholder="Repeat password" id="account_repeat_input" value={input.repeat} onChange={handleChange} />
+            <input type="password" name="repeat" placeholder="Repeat password" id="account_repeat_input" value={input.repeat} onChange={handleChange} />
           </div>
         }
         {
           action == "Sign In" ?
-            <button type="button" className="button-small black ml-auto mb-2" onClick={() => { setAction("Sign Up") }}>Don't have an account.</button>
+            <button type="button" className="button-small black ml-auto mb-2" onClick={() => { setAction("Sign Up") }}>Don't have an account</button>
             :
-            <button type="button" className="button-small black ml-auto mb-2" onClick={() => { setAction("Sign In") }}>Already have an account.</button>
+            <button type="button" className="button-small black ml-auto mb-2" onClick={() => { setAction("Sign In") }}>Already have an account</button>
         }
         <p className="text-error">{error}</p>
         {
           loading ?
-            <div className="loader ml-auto mr-auto" />
+            <div className="loader center" />
             :
-            <button type="submit" id="account_button" className="btn btn-primary">{action}</button>
+            <button type="submit" id="account_button">{action}</button>
         }
       </form>
     </div>

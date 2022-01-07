@@ -18,3 +18,6 @@ export const path = (state: string = '.', action: Action<string | 0 | -1>): stri
       pathChange(state, action.payload)
     :
     state
+
+export const movePath = (state: string = '', action: Action<string>): string =>
+  action.type == 'UPDATE_MOVEPATH' ? action.payload : state

@@ -8,7 +8,7 @@ import * as ActionCreators from '../actions'
 
 export const ImageView = (props: { name: string }) => {
 
-  const [view, setView]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
+  const [view, setView]: [0 | 1 | 2 | 3, React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3>>] = useState(0)
   const [imgUrl, setImgUrl]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(null)
 
   const { name } = props
@@ -19,10 +19,10 @@ export const ImageView = (props: { name: string }) => {
 
   const handleClick = () => {
 
-    setView(true)
+    setView(1)
 
     $.ajax({
-      url: globalThis.apiLocation + "imageview",
+      url: globalThis.apiLocation + "view",
       type: 'POST',
       contentType: 'application/json; charset=utf-8',
       processData: false,
@@ -32,12 +32,14 @@ export const ImageView = (props: { name: string }) => {
         ...getBaseFtpRequest()
       })
     })
-      .done((data: ImageViewResponse) => {
+      .done((data: ViewResponse) => {
         if (!data.result) {
           updateError(data.errors[0])
+          setView(0)
           return
         }
         setImgUrl(data.url)
+        setView(2)
         updateError('')
       })
       .fail(() => { updateLevel("CONNECTING") })
@@ -50,12 +52,10 @@ export const ImageView = (props: { name: string }) => {
       {
         !view ? null :
           <div className="overlay">
-            <div className="hold-image-view">
-              <i className="fas fa-times" onClick={() => { setView(false) }} />
-              {
-                !imgUrl ? <div className="loader" /> :
-                  <img src={globalThis.apiLocation + imgUrl} />
-              }
+            <div className="hold-view">
+              <i className="fas fa-times" onClick={() => { setView(0) }} />
+              {view != 3 ? <div className="loader" /> : null}
+              {view >= 2 ? <img src={globalThis.apiLocation + imgUrl} style={{ display: view == 3 ? "block" : "none" }} onLoad={() => { setView(3) }} /> : null}
             </div>
           </div>
       }

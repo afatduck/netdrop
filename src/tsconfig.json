@@ -3,6 +3,7 @@
     "jsx": "react",
     "esModuleInterop": true,
     "typeRoots": ["./js/@types", "node_modules"],
+    "resolveJsonModule": true,
     "downlevelIteration": true
  }
 

@@ -13,5 +13,5 @@ export const ThemeButton = () => {
 
   }
 
-  return <button type="button" className="button-small" id="theme-button" onClick={handleClick}>Switch Theme</button>
+  return <i className={'fas ' + (dark ? "fa-sun" : 'fa-moon')} id="theme-button" onClick={handleClick} />
 }

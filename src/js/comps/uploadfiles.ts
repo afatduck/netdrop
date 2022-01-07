@@ -111,6 +111,7 @@ export const uploadFiles = (files: Files[] | FileList) => {
             updateProgress([progress.done, progress.speed])
 
           })
+          .fail(() => { updateLevel("CONNECTING") })
       }, 750)
     })
     .fail(() => { updateLevel("CONNECTING") })

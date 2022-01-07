@@ -12,10 +12,11 @@ import { Account } from './comps/account'
 import { ThemeButton } from './comps/theme'
 import { ProgressOverlay } from './comps/progress'
 import { ItemMenu } from './comps/itemmenu'
+import { GuideButton } from './comps/guide'
 
 import * as ActionCreators from './actions'
 
-globalThis.apiLocation = localStorage.getItem('apiLocation') || 'https://calc.world:5009/api/'
+globalThis.apiLocation = localStorage.getItem('apiLocation') || 'https://netdrop.azurewebsites.net/api/'
 
 $(document).ready(() => {
 
@@ -29,6 +30,8 @@ $(document).ready(() => {
 
   $('html').attr("data-theme", localStorage.getItem("theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"))
 
+  setTimeout(() => { $('html').attr("data-loaded", "") }, 200)
+
   const App = () => {
 
     const dispatch = useDispatch()
@@ -39,34 +42,46 @@ $(document).ready(() => {
     const [localhost, setLocalhost]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(globalThis.apiLocation.includes('localhost'))
     const switchApi = () => {
       setLocalhost(!localhost)
-      localStorage.setItem('apiLocation', `https://${!localhost ? 'localhost' : 'calc.world'}:5009/api/`)
+      localStorage.setItem('apiLocation', `https://${!localhost ? 'localhost:5009' : 'netdrop.azurewebsites.net'}/api/`)
       globalThis.apiLocation = localStorage.getItem('apiLocation')
       updateLevel("CONNECTING")
     }
 
     return (
       <div>
-        <nav className="row p-4 pt-3">
+        <nav>
 
-          <h3 className="column column-50">Netdrop</h3>
+          <div id="nav-title" onClick={() => { location.reload() }}>
+            <svg viewBox="0 0 700 700">
+              <use href="static/icons/logo.svg#logo"></use>
+            </svg>
+            <h3>Netdrop</h3>
+          </div>
 
-          {
-            globals.state == "USING" ? <LoginForm /> : null
+          <div>
+            {
+              globals.state == "USING" ? <LoginForm /> : null
 
-          }
-          {
-            globals.state == "USING" ? <Account key={localhost ? 'a' : 'B'} /> : null
-          }
+            }
+            {
+              globals.state == "USING" ? <Account key={localhost ? 'a' : 'B'} /> : null
+            }
+          </div>
 
         </nav>
-        <section className="container-fluid p-4">
-          {(() => { if (globals.state == 'CONNECTING') { return <ContactApi key={localhost ? 'a' : 'B'} /> } })()}
+
+        {globals.state == "CONNECTING" ? null : <GuideButton />}
+
+        <section id="content" className="center">
+          {globals.state != "CONNECTING" ? null : <ContactApi key={localhost ? 'a' : 'B'} />}
           {globals.state == "CONNECTING" ? null : <DirList />}
           <h5 className='text-error mt-3'>{globals.error}</h5>
-          <button type="button" className="btn btn-info btn-sm" onClick={switchApi} >{`Switch to ${localhost ? 'online' : 'localhost'} api`}</button>
-          <br />
-          <ResetButton />
         </section>
+        <div id="dev-buttons">
+          <p>Dev Buttons</p>
+          <button type="button" className="button-small" onClick={switchApi} >{`Switch to ${localhost ? 'online' : 'localhost'} api`}</button>
+          <ResetButton />
+        </div>
         <ProgressOverlay />
         <ThemeButton />
         <ItemMenu />

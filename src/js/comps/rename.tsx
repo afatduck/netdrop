@@ -23,7 +23,11 @@ export const Rename = (props: { name: string, setLoading: React.Dispatch<React.S
     setInput(name)
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { setInput(e.target.value) }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    if (value.includes("/")) { return }
+    setInput(value)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

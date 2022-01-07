@@ -66,3 +66,11 @@ export const updateItemMenu = (payload: itemMenu) =>
       payload: payload
     })
   }
+
+export const updateMovePath = (f: string) =>
+  (dispatch: Dispatch) => {
+    dispatch({
+      type: 'UPDATE_MOVEPATH',
+      payload: f
+    })
+  }
