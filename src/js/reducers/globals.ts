@@ -1,4 +1,4 @@
-export const globals = (state: globals = null, action: Action<string | states | UserData>): globals => {
+export const globals = (state: globals = null, action: Action<string | states | UserData | CookieConsentInterface>): globals => {
 
   switch (action.type) {
 
@@ -7,7 +7,7 @@ export const globals = (state: globals = null, action: Action<string | states | 
       return { ...state }
 
     case 'UPDATE_ERROR':
-      state.error = (action.payload as string)
+      state.error = action.payload as string
       return { ...state }
 
     case 'UPDATE_LEVEL':
@@ -17,8 +17,12 @@ export const globals = (state: globals = null, action: Action<string | states | 
       return { ...state }
 
     case 'UPDATE_USER':
-      state.user = (action.payload as UserData)
+      state.user = action.payload as UserData
       return { ...state }
+
+    case 'UPDATE_CONSENT':
+      state.consent = action.payload as CookieConsentInterface
+      return {...state}
 
     default: return state
   }

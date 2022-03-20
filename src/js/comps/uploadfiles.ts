@@ -98,20 +98,22 @@ export const uploadFiles = (files: Files[] | FileList) => {
         })
           .done((progress: ProgressResponse) => {
 
-            if (progress.done == -1 || progress.done == 100) {
+            if (progress.done == -1 || progress.complete) {
               clearInterval(interval)
               updateProgress(null)
-              updateError(progress.done == -1 ? 'Something went wrong.' : '')
-
               listdir()
-
+              updateError(progress.done == -1 ? progress.errors[0] || 'Something went wrong.' : '')
               return
             }
 
             updateProgress([progress.done, progress.speed])
 
           })
-          .fail(() => { updateLevel("CONNECTING") })
+          .fail(() => {
+            clearInterval(interval)
+            updateProgress(null)
+            updateLevel("CONNECTING")
+          })
       }, 750)
     })
     .fail(() => { updateLevel("CONNECTING") })

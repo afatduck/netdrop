@@ -1,3 +1,5 @@
+import { store } from "./store"
+
 export const sortDirs = (d: directory[]): directory[] =>
   d.sort((a, b) => (a.type == "dir" ? 0 : 1) - (b.type == "dir" ? 0 : 1))
 
@@ -21,9 +23,13 @@ export const filesize = (s: number): string => {
 }
 
 export const getBaseFtpRequest = (): BaseFtpRequest => ({
-  Host: localStorage.getItem('host'),
-  Username: localStorage.getItem('user'),
+  Host: globalThis.ftpHost,
+  Username: globalThis.ftpUser,
   Password: globalThis.ftpPassword,
-  Secure: localStorage.getItem('secure') == "true",
-  Port: parseInt(localStorage.getItem('port'))
+  Secure: globalThis.ftpSecure,
+  Port: globalThis.ftpPort,
+  Save: store.getState().globals.consent.connectionSession
 })
+
+export const formatDate = (d: Date): string =>
+  `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes() < 10 ? "0" : ""}${d.getMinutes()}`

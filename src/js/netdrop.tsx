@@ -1,10 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { render } from 'react-dom'
-import { Provider, useSelector, useDispatch } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { Provider, useSelector } from 'react-redux'
 
 import { store } from './store'
-import { ResetButton } from './comps/small'
 import { ContactApi } from './comps/contact'
 import { LoginForm } from './comps/login'
 import { DirList } from './comps/dirlist'
@@ -13,12 +11,18 @@ import { ThemeButton } from './comps/theme'
 import { ProgressOverlay } from './comps/progress'
 import { ItemMenu } from './comps/itemmenu'
 import { GuideButton } from './comps/guide'
+import ConsentOverlay from './comps/consent'
 
-import * as ActionCreators from './actions'
-
-globalThis.apiLocation = localStorage.getItem('apiLocation') || 'https://netdrop.azurewebsites.net/api/'
+globalThis.apiLocation = 'https://netdrop.azurewebsites.net/api/'
 
 $(document).ready(() => {
+
+  $.ajaxSetup({
+    crossDomain: true,
+    xhrFields: {
+      withCredentials: true
+    },
+  })
 
   let dragTimeout: ReturnType<typeof setTimeout>
   $(document).on("dragover", (e: Event) => {
@@ -34,24 +38,13 @@ $(document).ready(() => {
 
   const App = () => {
 
-    const dispatch = useDispatch()
-    const { updateLevel } = bindActionCreators(ActionCreators, dispatch)
-
     const { globals } = useSelector((state: RootState) => state)
-
-    const [localhost, setLocalhost]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(globalThis.apiLocation.includes('localhost'))
-    const switchApi = () => {
-      setLocalhost(!localhost)
-      localStorage.setItem('apiLocation', `https://${!localhost ? 'localhost:5009' : 'netdrop.azurewebsites.net'}/api/`)
-      globalThis.apiLocation = localStorage.getItem('apiLocation')
-      updateLevel("CONNECTING")
-    }
 
     return (
       <div>
         <nav>
 
-          <div id="nav-title" onClick={() => { location.reload() }}>
+          <div id="nav-title">
             <svg viewBox="0 0 700 700">
               <use href="static/icons/logo.svg#logo"></use>
             </svg>
@@ -60,11 +53,11 @@ $(document).ready(() => {
 
           <div>
             {
-              globals.state == "USING" ? <LoginForm /> : null
-
+              globals.state == "USING" && globals.consent.jwtCookie ? <Account /> : null
             }
             {
-              globals.state == "USING" ? <Account key={localhost ? 'a' : 'B'} /> : null
+              globals.state == "USING" ? <LoginForm /> : null
+
             }
           </div>
 
@@ -73,15 +66,11 @@ $(document).ready(() => {
         {globals.state == "CONNECTING" ? null : <GuideButton />}
 
         <section id="content" className="center">
-          {globals.state != "CONNECTING" ? null : <ContactApi key={localhost ? 'a' : 'B'} />}
+          {globals.state != "CONNECTING" ? null : <ContactApi />}
           {globals.state == "CONNECTING" ? null : <DirList />}
           <h5 className='text-error mt-3'>{globals.error}</h5>
         </section>
-        <div id="dev-buttons">
-          <p>Dev Buttons</p>
-          <button type="button" className="button-small" onClick={switchApi} >{`Switch to ${localhost ? 'online' : 'localhost'} api`}</button>
-          <ResetButton />
-        </div>
+        <ConsentOverlay />
         <ProgressOverlay />
         <ThemeButton />
         <ItemMenu />

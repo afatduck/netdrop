@@ -75,6 +75,8 @@
 
       .hold-buttons
         display: flex
+        gap: 4px
+        flex-wrap: wrap
 
         button:not(:last-child)
           margin-right: 1rem !important
@@ -84,7 +86,7 @@
           div
             padding: 1rem 2rem
 
-      pre
+      & > pre
         width: 100%
         height: calc(100% - 3rem)
         overflow: hidden
@@ -97,8 +99,46 @@
           width: calc(100% - 0.3rem)
           height: 100%
           overflow: auto
+          padding: 10px
+          margin: 0
+          font-size: 86%
+          text-shadow: 0 -0.1em 0.2em var(--secondary-bg-color) !important
+          line-height: 1.6 !important
 
-.progress-bg, #add-inner, #profile, #guide-inner
+      #hold-editor
+        height: calc(100% - 3rem)
+        overflow: auto
+        margin-top: 16px
+        width: 100%
+
+        .w-tc-editor
+          border-radius: 0.5rem
+          border-left: 0.3rem solid var(--main-ovca)
+          width: 100%
+          min-height: 100%
+
+          pre
+            border: none !important
+            margin: 0 !important
+            background: inherit !important
+            box-shadow: none !important
+            padding: 0 !important
+            overflow-x: hidden
+
+            code
+              display: inline !important
+              padding: 0 !important
+              background: inherit !important
+              font-size: inherit !important
+              margin: 0 !important
+              line-height: 160% !important
+              text-shadow: 0 -0.1em 0.2em var(--secondary-bg-color) !important
+              white-space: pre-wrap
+              color: var(--main-color)
+              background-color: var(--secondary-bg-color)
+              
+
+.progress-bg, #profile, [id$="-inner"]
   box-sizing: border-box
   padding: 4rem
   border-radius: 0.5rem
@@ -171,3 +211,41 @@
 
 .overlay--strong
   background-color: #111b
+
+#consent-inner
+  max-height: 90vh
+  overflow: hidden
+  display: flex
+  flex-direction: column
+
+  details
+    overflow-y: auto
+    height: auto
+
+    summary
+      cursor: pointer
+
+    &[open] summary
+      margin-bottom: 3rem
+
+    &>div
+      display: flex
+      align-items: flex-start
+      
+      &:not(:last-child)
+        margin-bottom: 2rem
+
+      div
+        max-width: 80%
+
+        h3
+          margin: 0
+        p
+          margin: .5rem 0
+
+        h6
+          font-style: italic
+          font-size: 1.2rem
+
+      .checkbox-container
+        margin: 1.2rem max(10%, 4rem) 0 auto

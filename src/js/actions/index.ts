@@ -1,4 +1,5 @@
 import { Dispatch } from 'redux'
+import { store } from '../store'
 
 import { filesize } from '../utils'
 
@@ -26,7 +27,7 @@ export const updateUser = (user: UserData) =>
     })
   }
 
-export const updateCdir = (d: directory[] | directory) =>
+export const updateCdir = (d: directory[] | directory | null) =>
   (dispatch: Dispatch) => {
     dispatch({
       type: 'UPDATE_CDIR',
@@ -38,7 +39,7 @@ export const updatePath = (f: string | 0 | -1) =>
   (dispatch: Dispatch) => {
     dispatch({
       type: 'UPDATE_PATH',
-      payload: f
+      payload: [f, store.getState().globals.consent.connectionSession]
     })
   }
 
@@ -72,5 +73,19 @@ export const updateMovePath = (f: string) =>
     dispatch({
       type: 'UPDATE_MOVEPATH',
       payload: f
+    })
+  }
+
+  export const updateConsent = (payload: CookieConsentInterface) =>
+  (dispatch: Dispatch) => {
+
+    if (payload) {
+      const consentJson = JSON.stringify(payload)
+      localStorage.setItem("consent", consentJson)
+    }
+
+    dispatch({
+      type: 'UPDATE_CONSENT',
+      payload: payload
     })
   }

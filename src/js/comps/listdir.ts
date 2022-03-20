@@ -4,8 +4,9 @@ import * as StoreActions from '../actions/store-actions'
 
 const { updateError, updateCdir, updateLevel, updatePath, requestSwitch } = StoreActions
 
-export const listdir = (path: string = store.getState().path) => {
+export const listdir = (path: string = store.getState().path, ignoreError: boolean = false) => {
 
+  const consent = store.getState().globals.consent
   const p = store.getState().path
   const req = store.getState().globals.request
 
@@ -18,14 +19,20 @@ export const listdir = (path: string = store.getState().path) => {
       type: "POST",
       data: JSON.stringify({
         ...getBaseFtpRequest(),
-        Path: path
+        Path: path,
+        New: false,
+        Connection: sessionStorage.getItem("connection") || "" 
       }),
       processData: false,
-      contentType: 'application/json; charset=utf-8'
+      contentType: 'application/json; charset=utf-8',
+      crossDomain: consent.connectionCookie,
+      xhrFields: {
+        withCredentials: consent.connectionCookie
+      }
     })
     .done((data: ListDirRespone) => {
       if (!data.result) {
-        updateError(data.errors[0])
+        if (!ignoreError) updateError(data.errors[0])
         return
       }
       updateCdir(data.dirList)
@@ -34,8 +41,12 @@ export const listdir = (path: string = store.getState().path) => {
         $('#hold-table section')[0].scrollTop = 0
         updatePath(p.length > path.length ? 0 : path.substr(path.lastIndexOf('/') + 1))
       }
+      if (consent.connectionSession) sessionStorage.setItem("connection", data.connection)
     })
-    .fail(() => { updateLevel("CONNECTING") })
+    .fail(() => {
+      if (ignoreError) return
+      updateLevel("CONNECTING") 
+    })
     .always(() => {
       requestSwitch()
     })

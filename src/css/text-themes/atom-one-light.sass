@@ -18,66 +18,103 @@
 .text-theme-atom-one-light
 
   .hljs
-    color: #383a42
-    background: #fafafa
+    background: #F0F0F0
+    color: #444
 
+  // .hljs-subst
+  // .hljs-formula,
+  // .hljs-attr,
+  // .hljs-property,
+  // .hljs-params
 
   .hljs-comment,
-  .hljs-quote
+  .token.comment
     color: #a0a1a7
-    font-style: italic
 
+  .hljs-tag,
+  .hljs-punctuation,
+  .token.tag, .token.punctuation, .token.namespace
+    font-weight: 400 !important
+    color: #e45649
+    opacity: 1
 
-  .hljs-doctag,
-  .hljs-keyword,
-  .hljs-formula
-    color: #a626a4
+  .token.tag .token.punctuation, .token.doctype .token.punctuation
+    font-weight: 400 !important
+    color: inherit
 
-
-  .hljs-section,
-  .hljs-name,
-  .hljs-selector-tag,
-  .hljs-deletion,
-  .hljs-subst
+  .hljs-tag .hljs-name,
+  .hljs-tag .hljs-attr,
+  .token.tag .token.attr-name
+    font-weight: normal
     color: #e45649
 
+  .token.operator,.token.url, .token.selector
+    color: var(--main-color)
 
-  .hljs-literal
-    color: #0184bb
+  .token.keyword, .token.property, .token.punctuation, .token.atrule
+    color: var(--main-color)
+    font-weight: bold
 
-
-  .hljs-string,
-  .hljs-regexp,
-  .hljs-addition,
+  .hljs-keyword,
   .hljs-attribute,
-  .hljs-meta .hljs-string
+  .hljs-selector-tag,
+  .hljs-meta .hljs-keyword,
+
+  .hljs-doctag,
+  .hljs-name, .token.tag
+    font-weight: bold
+
+
+  .hljs-type,
+  .hljs-string,
+  .hljs-number,
+  .hljs-selector-id,
+  .hljs-selector-class,
+  .hljs-quote,
+  .hljs-template-tag,
+  .hljs-deletion,
+  .token.attr-value,.token.constant,.token.number,.token.symbol,.token.function-definition, .token.string, .token.method, .token.color, .token.unit, .token.selector .id, .token.selector .class
     color: #50a14f
 
 
-  .hljs-attr,
+  .hljs-title,
+  .hljs-section,
+  .token.maybe-class-name,.token.function-definition
+    color: #4078f2
+    font-weight: bold !important
+
+
+  .hljs-regexp,
+  .hljs-symbol,
   .hljs-variable,
   .hljs-template-variable,
-  .hljs-type,
-  .hljs-selector-class,
+  .hljs-link,
   .hljs-selector-attr,
+  .hljs-operator,
   .hljs-selector-pseudo,
-  .hljs-number
+  .token.variable, .token.pseudo-class, .token.attr-name
+    color: #c18401
+
+  .hljs-literal,
+  .token.boolean
     color: #986801
 
 
-  .hljs-symbol,
-  .hljs-bullet,
-  .hljs-link,
-  .hljs-meta,
-  .hljs-selector-id,
-  .hljs-title
-    color: #4078f2
-
-
   .hljs-built_in,
-  .hljs-title.class_,
-  .hljs-class .hljs-title
-    color: #c18401
+  .hljs-bullet,
+  .hljs-code,
+  .hljs-addition,
+  .token.type, .token.builtin, .token.char, .token.inserted
+    color: #0184bb
+
+  .hljs-meta, 
+  .token.delimiter
+    color: #a626a4
+    font-weight: 400 !important
+
+
+  .hljs-meta .hljs-string, .token.cdata, .token.doctype,.token.prolog
+    color: #a626a4
 
 
   .hljs-emphasis
@@ -86,7 +123,3 @@
 
   .hljs-strong
     font-weight: bold
-
-
-  .hljs-link
-    text-decoration: underline

@@ -20,19 +20,33 @@
   // .hljs-property,
   // .hljs-params
 
-  .hljs-comment
+  .hljs-comment,
+  .token.comment
     color: #888888
 
   .hljs-tag,
-  .hljs-punctuation
+  .hljs-punctuation,
+  .token.tag, .token.punctuation, .token.namespace
     color: #444a
+    font-weight: 400 !important
+    opacity: 1
 
+  .token.tag .token.punctuation, .token.doctype .token.punctuation
+    font-weight: 400 !important
+    color: inherit
 
   .hljs-tag .hljs-name,
-  .hljs-tag .hljs-attr
+  .hljs-tag .hljs-attr,
+  .token.tag .token.attr-name
+    font-weight: normal
     color: #444
 
+  .token.operator,.token.url, .token.selector
+    color: var(--main-color)
 
+  .token.keyword, .token.property, .token.punctuation, .token.atrule
+    color: var(--main-color)
+    font-weight: bold
 
   .hljs-keyword,
   .hljs-attribute,
@@ -40,7 +54,7 @@
   .hljs-meta .hljs-keyword,
 
   .hljs-doctag,
-  .hljs-name
+  .hljs-name, .token.tag
     font-weight: bold
 
 
@@ -51,14 +65,16 @@
   .hljs-selector-class,
   .hljs-quote,
   .hljs-template-tag,
-  .hljs-deletion
+  .hljs-deletion,
+  .token.attr-value,.token.constant,.token.number,.token.symbol,.token.function-definition, .token.string, .token.method, .token.color, .token.unit, .token.selector .id, .token.selector .class
     color: #880000
 
 
   .hljs-title,
-  .hljs-section
+  .hljs-section,
+  .token.maybe-class-name
     color: #880000
-    font-weight: bold
+    font-weight: bold !important
 
 
   .hljs-regexp,
@@ -68,24 +84,28 @@
   .hljs-link,
   .hljs-selector-attr,
   .hljs-operator,
-  .hljs-selector-pseudo
+  .hljs-selector-pseudo,
+  .token.variable, .token.pseudo-class, .token.attr-name
     color: #BC6060
 
-  .hljs-literal
+  .hljs-literal,
+  .token.boolean
     color: #78A960
 
 
   .hljs-built_in,
   .hljs-bullet,
   .hljs-code,
-  .hljs-addition
+  .hljs-addition,
+  .token.type, .token.builtin, .token.char, .token.inserted
     color: #397300
 
-  .hljs-meta
+  .hljs-meta, 
+  .token.delimiter
     color: #1f7199
 
 
-  .hljs-meta .hljs-string
+  .hljs-meta .hljs-string, .token.cdata, .token.doctype,.token.prolog
     color: #4d99bf
 
 

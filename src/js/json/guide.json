@@ -13,7 +13,7 @@
   {
     "title": "New Connection",
     "text": [
-      "To start actually using the app, you need to press the \"new connection\" button.",
+      "To start actually using the app, you need to press the 'new connection' button.",
       "After pressing it, a form will open up, allowing you to enter your FTP credentials. If the connection succeeds, you will get a directory listing of the main folder."
     ],
     "highlight": "#nav-login",
@@ -24,7 +24,7 @@
     "title": "Directory Listing",
     "text": [
       "After establishing a connection, you will get an output similar to the one below. It's a list of files and folders in your root directory with some basic info.",
-      "You can easily differentiate files and folders because folders don't have size. Clicking on a folder will enter it while clicking on a file will download it.",
+      "You can easily differentiate files and folders because folders don't have size. Clicking on a folder will enter it while double clicking on a file will download it.",
       "The slash you see on the bottom displays the path of your current directory."
     ],
     "highlight": null,
@@ -46,9 +46,9 @@
     "title": "Option Menu",
     "text": [
       "Right-clicking an item or pressing the three bars icon on the right will open a menu similar to the one below.",
-      "All of those options should be self-explanatory, but I will quickly describe the \"view\" one. So, you can view image files smaller than 4MB; and text files smaller than 0.5MB. The textual files will have code highlighting; and the option to edit and save them in-browser. Beware that determining what file is textual can be a little problematic, so you might be able to view some smaller binary files."
+      "All of those options should be self-explanatory, but I will quickly describe the 'view' one. So, you can view image files smaller than 4MB; and text files smaller than 0.5MB. The textual files will have code highlighting; and the option to edit and save them in-browser. Beware that determining what file is textual can be a little problematic, so you might be able to view some smaller binary files."
     ],
-    "highligh": null,
+    "highlight": null,
     "image": "2.png"
   },
 

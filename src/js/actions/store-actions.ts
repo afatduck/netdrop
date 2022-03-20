@@ -32,7 +32,7 @@ export const updateLevel = (payload: states) => {
 export const updatePath = (payload: string | 0 | -1) => {
   store.dispatch({
     type: "UPDATE_PATH",
-    payload: payload
+    payload: [payload, store.getState().globals.consent.connectionSession]
   })
 }
 

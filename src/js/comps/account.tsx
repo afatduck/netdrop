@@ -22,10 +22,6 @@ export const Account = () => {
       $.ajax({
         url: globalThis.apiLocation + "logout",
         type: "GET",
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        },
         timeout: 1e4
       })
         .done(() => {

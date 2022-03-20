@@ -5,12 +5,13 @@ import { useDropzone } from 'react-dropzone'
 
 import * as ActionCreators from '../actions'
 
-import { filesize, pathChange } from '../utils'
+import { filesize, pathChange, formatDate } from '../utils'
 import { uploadFiles } from './uploadfiles'
 import { listdir } from './listdir'
 import { downloadItem } from './download'
 
 import { AddTab } from './add'
+import DisconnectButton from './disconnect'
 
 export const DirList = () => {
 
@@ -76,17 +77,19 @@ export const DirList = () => {
   let i: number = 0
 
   for (let c of cdir) {
+    const d = new Date(c.modify + new Date().getTimezoneOffset() * 0)
     items.push(
       <tr
         className={'dir-item'}
         data-dir={c.name}
         data-id={i}
-        onClick={c.type == 'dir' ? handleFolder : handleFile}
+        onClick={c.type == 'dir' ? handleFolder : null}
+        onDoubleClick={c.type == 'file' ? handleFile : null}
         onContextMenu={handleRightClick}
         style={{ cursor: 'pointer' }}>
         <td>{c.name}</td>
         <td>{c.type == "file" ? filesize(parseInt(c.size)) || "0B" : "-"}</td>
-        <td>{c.modify}</td>
+        <td>{formatDate(d)}</td>
         <td><i className="fas fa-bars" data-id={i} onClick={handleRightClick} /></td>
       </tr>
     )
@@ -115,6 +118,7 @@ export const DirList = () => {
         </section>
       </div>
       <blockquote><em>{path.substr(1) || "/"}</em></blockquote>
+      <DisconnectButton/>
       <input {...getInputProps({ onClick: e => e.preventDefault() })} />
     </div>
   )

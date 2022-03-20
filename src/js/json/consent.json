@@ -1,0 +1,39 @@
+[
+    {
+        "name": "Save Consent",
+        "details": "Required, your consent needs to be saved. If you deny all, you will get this popup each time you visit this website.",
+        "type": "LOCAL STORAGE",
+        "needs": null
+    },
+    {
+        "name": "Page Setting",
+        "details": "Used to save your theme and guide page progression.",
+        "type": "LOCAL STORAGE",
+        "needs": null
+    },
+    {
+        "name": "Last Login",
+        "details": "Saves settings of your last successful FTP connection (without password). Used to fill in data faster.",
+        "type":"LOCAL STORAGE",
+        "needs": null
+    },
+    {
+        "name": "Tab Connections",
+        "details": "Saves your connection key in your 'tab storage'. Boosts performace by preventing reconnection to FTP server on each action.",
+        "type": "SESSION STORAGE",
+        "needs": null
+    },
+    {
+        "name": "Session Connections",
+        "details": "Saves your connection key in a session cookie too, allowing your connections to be saved even if you close the tab, but not if you close the browser. Needs 'Tab Connections' to work.",
+        "type": "SESSION COOKIE",
+        "needs": 3
+    },
+    {
+        "name": "Authenticaion Token",
+        "details": "Saves a unique login token to a permanent cookie. Required for authentication.",
+        "type": "PERMANENT COOKIE",
+        "needs": null
+    }
+    
+]

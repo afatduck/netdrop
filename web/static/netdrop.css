@@ -23,7 +23,7 @@
   background-color: #eeeb;
 }
 
-[data-loaded] *:not(body, tr, .dropdown div, #item-menu button, .bar, input, button:hover, .button-clear) {
+[data-loaded] *:not(body, tr, .dropdown div, #item-menu button, .bar, input, button:hover, .button-clear, .checkmark) {
   transition: background-color 1s;
 }
 [data-loaded] body {
@@ -514,6 +514,8 @@ input:autofill {
 }
 .overlay .hold-view .hold-text .hold-buttons {
   display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 .overlay .hold-view .hold-text .hold-buttons button:not(:last-child) {
   margin-right: 1rem !important;
@@ -522,22 +524,59 @@ input:autofill {
 .overlay .hold-view .hold-text .hold-buttons .dropdown div {
   padding: 1rem 2rem;
 }
-.overlay .hold-view .hold-text pre {
+.overlay .hold-view .hold-text > pre {
   width: 100%;
   height: calc(100% - 3rem);
   overflow: hidden;
   border-radius: 0.5rem;
   background-color: var(--secondary-bg-color);
 }
-.overlay .hold-view .hold-text pre code {
+.overlay .hold-view .hold-text > pre code {
   color: var(--main-color);
   background-color: var(--secondary-bg-color);
   width: calc(100% - 0.3rem);
   height: 100%;
   overflow: auto;
+  padding: 10px;
+  margin: 0;
+  font-size: 86%;
+  text-shadow: 0 -0.1em 0.2em var(--secondary-bg-color) !important;
+  line-height: 1.6 !important;
+}
+.overlay .hold-view .hold-text #hold-editor {
+  height: calc(100% - 3rem);
+  overflow: auto;
+  margin-top: 16px;
+  width: 100%;
+}
+.overlay .hold-view .hold-text #hold-editor .w-tc-editor {
+  border-radius: 0.5rem;
+  border-left: 0.3rem solid var(--main-ovca);
+  width: 100%;
+  min-height: 100%;
+}
+.overlay .hold-view .hold-text #hold-editor .w-tc-editor pre {
+  border: none !important;
+  margin: 0 !important;
+  background: inherit !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow-x: hidden;
+}
+.overlay .hold-view .hold-text #hold-editor .w-tc-editor pre code {
+  display: inline !important;
+  padding: 0 !important;
+  background: inherit !important;
+  font-size: inherit !important;
+  margin: 0 !important;
+  line-height: 160% !important;
+  text-shadow: 0 -0.1em 0.2em var(--secondary-bg-color) !important;
+  white-space: pre-wrap;
+  color: var(--main-color);
+  background-color: var(--secondary-bg-color);
 }
 
-.progress-bg, #add-inner, #profile, #guide-inner {
+.progress-bg, #profile, [id$=-inner] {
   box-sizing: border-box;
   padding: 4rem;
   border-radius: 0.5rem;
@@ -545,11 +584,11 @@ input:autofill {
   background-color: var(--main-bg-color);
   width: 50%;
 }
-.progress-bg .buttons, #add-inner .buttons, #profile .buttons, #guide-inner .buttons {
+.progress-bg .buttons, #profile .buttons, [id$=-inner] .buttons {
   display: flex;
   justify-content: space-between;
 }
-.progress-bg .buttons button, .progress-bg .buttons label, #add-inner .buttons button, #add-inner .buttons label, #profile .buttons button, #profile .buttons label, #guide-inner .buttons button, #guide-inner .buttons label {
+.progress-bg .buttons button, .progress-bg .buttons label, #profile .buttons button, #profile .buttons label, [id$=-inner] .buttons button, [id$=-inner] .buttons label {
   width: 45%;
   word-wrap: break-word;
   display: inline-block;
@@ -558,10 +597,10 @@ input:autofill {
   line-height: 1.6rem;
   padding: 1rem 2.4rem;
 }
-.progress-bg .buttons button button, .progress-bg .buttons label button, #add-inner .buttons button button, #add-inner .buttons label button, #profile .buttons button button, #profile .buttons label button, #guide-inner .buttons button button, #guide-inner .buttons label button {
+.progress-bg .buttons button button, .progress-bg .buttons label button, #profile .buttons button button, #profile .buttons label button, [id$=-inner] .buttons button button, [id$=-inner] .buttons label button {
   width: 100%;
 }
-.progress-bg .buttons label, #add-inner .buttons label, #profile .buttons label, #guide-inner .buttons label {
+.progress-bg .buttons label, #profile .buttons label, [id$=-inner] .buttons label {
   padding: 0;
 }
 
@@ -613,6 +652,46 @@ input:autofill {
   background-color: #111b;
 }
 
+#consent-inner {
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+#consent-inner details {
+  overflow-y: auto;
+  height: auto;
+}
+#consent-inner details summary {
+  cursor: pointer;
+}
+#consent-inner details[open] summary {
+  margin-bottom: 3rem;
+}
+#consent-inner details > div {
+  display: flex;
+  align-items: flex-start;
+}
+#consent-inner details > div:not(:last-child) {
+  margin-bottom: 2rem;
+}
+#consent-inner details > div div {
+  max-width: 80%;
+}
+#consent-inner details > div div h3 {
+  margin: 0;
+}
+#consent-inner details > div div p {
+  margin: 0.5rem 0;
+}
+#consent-inner details > div div h6 {
+  font-style: italic;
+  font-size: 1.2rem;
+}
+#consent-inner details > div .checkbox-container {
+  margin: 1.2rem max(10%, 4rem) 0 auto;
+}
+
 .text-error {
   color: red !important;
   white-space: pre-line;
@@ -652,6 +731,12 @@ input:autofill {
   word-break: break-all;
   margin: 1em 0;
   display: block;
+  line-height: 0;
+  font-size: 1.2rem;
+}
+.dropdown section div p:last-child {
+  color: var(--secondary-ovca);
+  font-size: 75%;
 }
 .dropdown section div:hover {
   background-color: var(--secondary-color);
@@ -708,6 +793,7 @@ input:autofill {
 #add-tab {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
 }
 #add-tab .button-small {
   align-self: flex-end;
@@ -740,25 +826,10 @@ input:autofill {
   margin-bottom: 1rem;
   min-width: 12vw;
 }
-#item-menu button:not(.hold-buttons button) {
+#item-menu button:not(.hold-buttons button, [id$=inner] button) {
   width: 100%;
   border-radius: 0;
   display: block;
-}
-
-#dev-buttons {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-}
-#dev-buttons button {
-  display: block;
-}
-#dev-buttons button:last-child {
-  margin-top: 1rem;
-}
-#dev-buttons p {
-  margin: 0;
 }
 
 #dir-root {
@@ -804,6 +875,11 @@ input:autofill {
   cursor: pointer;
 }
 
+#delete-inner em {
+  filter: opacity(0.8);
+  font-weight: 100;
+}
+
 /* Large desktop */
 @media (min-width: 1200px) {
   #content {
@@ -828,7 +904,7 @@ input:autofill {
     margin: 2rem 0;
   }
 
-  .overlay form, .overlay #add-inner, .overlay #profile, .overlay #guide-inner, #tab-overlay form, #tab-overlay #add-inner, #tab-overlay #profile, #tab-overlay #guide-inner {
+  .overlay form, .overlay #profile, .overlay [id$=-inner], #tab-overlay form, #tab-overlay #profile, #tab-overlay [id$=-inner] {
     width: 60%;
   }
 }
@@ -846,7 +922,7 @@ input:autofill {
     padding-bottom: 5vh;
   }
 
-  .overlay form, .overlay #add-inner, .overlay #profile, .overlay #guide-inner, #tab-overlay form, #tab-overlay #add-inner, #tab-overlay #profile, #tab-overlay #guide-inner {
+  .overlay form, .overlay #profile, .overlay [id$=-inner], #tab-overlay form, #tab-overlay #profile, #tab-overlay [id$=-inner] {
     width: 80%;
   }
 
@@ -891,13 +967,13 @@ input:autofill {
     padding-bottom: 10vh;
   }
 
-  .overlay form, .overlay #add-inner, .overlay #profile, .overlay #guide-inner, #tab-overlay form, #tab-overlay #add-inner, #tab-overlay #profile, #tab-overlay #guide-inner {
+  .overlay form, .overlay #profile, .overlay [id$=-inner], #tab-overlay form, #tab-overlay #profile, #tab-overlay [id$=-inner] {
     width: 90%;
   }
 
   nav > div:last-child {
     width: 100%;
-    flex-direction: column;
+    flex-direction: column !important;
     align-items: flex-end;
   }
   nav > div:last-child > *:last-child {
@@ -912,23 +988,40 @@ input:autofill {
   background: #F0F0F0;
   color: #444;
 }
-.text-theme-default .hljs-comment {
+.text-theme-default .hljs-comment,
+.text-theme-default .token.comment {
   color: #888888;
 }
 .text-theme-default .hljs-tag,
-.text-theme-default .hljs-punctuation {
+.text-theme-default .hljs-punctuation,
+.text-theme-default .token.tag, .text-theme-default .token.punctuation, .text-theme-default .token.namespace {
   color: #444a;
+  font-weight: 400 !important;
+  opacity: 1;
+}
+.text-theme-default .token.tag .token.punctuation, .text-theme-default .token.doctype .token.punctuation {
+  font-weight: 400 !important;
+  color: inherit;
 }
 .text-theme-default .hljs-tag .hljs-name,
-.text-theme-default .hljs-tag .hljs-attr {
+.text-theme-default .hljs-tag .hljs-attr,
+.text-theme-default .token.tag .token.attr-name {
+  font-weight: normal;
   color: #444;
+}
+.text-theme-default .token.operator, .text-theme-default .token.url, .text-theme-default .token.selector {
+  color: var(--main-color);
+}
+.text-theme-default .token.keyword, .text-theme-default .token.property, .text-theme-default .token.punctuation, .text-theme-default .token.atrule {
+  color: var(--main-color);
+  font-weight: bold;
 }
 .text-theme-default .hljs-keyword,
 .text-theme-default .hljs-attribute,
 .text-theme-default .hljs-selector-tag,
 .text-theme-default .hljs-meta .hljs-keyword,
 .text-theme-default .hljs-doctag,
-.text-theme-default .hljs-name {
+.text-theme-default .hljs-name, .text-theme-default .token.tag {
   font-weight: bold;
 }
 .text-theme-default .hljs-type,
@@ -938,13 +1031,15 @@ input:autofill {
 .text-theme-default .hljs-selector-class,
 .text-theme-default .hljs-quote,
 .text-theme-default .hljs-template-tag,
-.text-theme-default .hljs-deletion {
+.text-theme-default .hljs-deletion,
+.text-theme-default .token.attr-value, .text-theme-default .token.constant, .text-theme-default .token.number, .text-theme-default .token.symbol, .text-theme-default .token.function-definition, .text-theme-default .token.string, .text-theme-default .token.method, .text-theme-default .token.color, .text-theme-default .token.unit, .text-theme-default .token.selector .id, .text-theme-default .token.selector .class {
   color: #880000;
 }
 .text-theme-default .hljs-title,
-.text-theme-default .hljs-section {
+.text-theme-default .hljs-section,
+.text-theme-default .token.maybe-class-name {
   color: #880000;
-  font-weight: bold;
+  font-weight: bold !important;
 }
 .text-theme-default .hljs-regexp,
 .text-theme-default .hljs-symbol,
@@ -953,22 +1048,26 @@ input:autofill {
 .text-theme-default .hljs-link,
 .text-theme-default .hljs-selector-attr,
 .text-theme-default .hljs-operator,
-.text-theme-default .hljs-selector-pseudo {
+.text-theme-default .hljs-selector-pseudo,
+.text-theme-default .token.variable, .text-theme-default .token.pseudo-class, .text-theme-default .token.attr-name {
   color: #BC6060;
 }
-.text-theme-default .hljs-literal {
+.text-theme-default .hljs-literal,
+.text-theme-default .token.boolean {
   color: #78A960;
 }
 .text-theme-default .hljs-built_in,
 .text-theme-default .hljs-bullet,
 .text-theme-default .hljs-code,
-.text-theme-default .hljs-addition {
+.text-theme-default .hljs-addition,
+.text-theme-default .token.type, .text-theme-default .token.builtin, .text-theme-default .token.char, .text-theme-default .token.inserted {
   color: #397300;
 }
-.text-theme-default .hljs-meta {
+.text-theme-default .hljs-meta,
+.text-theme-default .token.delimiter {
   color: #1f7199;
 }
-.text-theme-default .hljs-meta .hljs-string {
+.text-theme-default .hljs-meta .hljs-string, .text-theme-default .token.cdata, .text-theme-default .token.doctype, .text-theme-default .token.prolog {
   color: #4d99bf;
 }
 .text-theme-default .hljs-emphasis {
@@ -979,58 +1078,91 @@ input:autofill {
 }
 
 .text-theme-atom-one-light .hljs {
-  color: #383a42;
-  background: #fafafa;
+  background: #F0F0F0;
+  color: #444;
 }
 .text-theme-atom-one-light .hljs-comment,
-.text-theme-atom-one-light .hljs-quote {
+.text-theme-atom-one-light .token.comment {
   color: #a0a1a7;
-  font-style: italic;
 }
-.text-theme-atom-one-light .hljs-doctag,
-.text-theme-atom-one-light .hljs-keyword,
-.text-theme-atom-one-light .hljs-formula {
-  color: #a626a4;
+.text-theme-atom-one-light .hljs-tag,
+.text-theme-atom-one-light .hljs-punctuation,
+.text-theme-atom-one-light .token.tag, .text-theme-atom-one-light .token.punctuation, .text-theme-atom-one-light .token.namespace {
+  font-weight: 400 !important;
+  color: #e45649;
+  opacity: 1;
 }
-.text-theme-atom-one-light .hljs-section,
-.text-theme-atom-one-light .hljs-name,
-.text-theme-atom-one-light .hljs-selector-tag,
-.text-theme-atom-one-light .hljs-deletion,
-.text-theme-atom-one-light .hljs-subst {
+.text-theme-atom-one-light .token.tag .token.punctuation, .text-theme-atom-one-light .token.doctype .token.punctuation {
+  font-weight: 400 !important;
+  color: inherit;
+}
+.text-theme-atom-one-light .hljs-tag .hljs-name,
+.text-theme-atom-one-light .hljs-tag .hljs-attr,
+.text-theme-atom-one-light .token.tag .token.attr-name {
+  font-weight: normal;
   color: #e45649;
 }
-.text-theme-atom-one-light .hljs-literal {
-  color: #0184bb;
+.text-theme-atom-one-light .token.operator, .text-theme-atom-one-light .token.url, .text-theme-atom-one-light .token.selector {
+  color: var(--main-color);
 }
-.text-theme-atom-one-light .hljs-string,
-.text-theme-atom-one-light .hljs-regexp,
-.text-theme-atom-one-light .hljs-addition,
+.text-theme-atom-one-light .token.keyword, .text-theme-atom-one-light .token.property, .text-theme-atom-one-light .token.punctuation, .text-theme-atom-one-light .token.atrule {
+  color: var(--main-color);
+  font-weight: bold;
+}
+.text-theme-atom-one-light .hljs-keyword,
 .text-theme-atom-one-light .hljs-attribute,
-.text-theme-atom-one-light .hljs-meta .hljs-string {
+.text-theme-atom-one-light .hljs-selector-tag,
+.text-theme-atom-one-light .hljs-meta .hljs-keyword,
+.text-theme-atom-one-light .hljs-doctag,
+.text-theme-atom-one-light .hljs-name, .text-theme-atom-one-light .token.tag {
+  font-weight: bold;
+}
+.text-theme-atom-one-light .hljs-type,
+.text-theme-atom-one-light .hljs-string,
+.text-theme-atom-one-light .hljs-number,
+.text-theme-atom-one-light .hljs-selector-id,
+.text-theme-atom-one-light .hljs-selector-class,
+.text-theme-atom-one-light .hljs-quote,
+.text-theme-atom-one-light .hljs-template-tag,
+.text-theme-atom-one-light .hljs-deletion,
+.text-theme-atom-one-light .token.attr-value, .text-theme-atom-one-light .token.constant, .text-theme-atom-one-light .token.number, .text-theme-atom-one-light .token.symbol, .text-theme-atom-one-light .token.function-definition, .text-theme-atom-one-light .token.string, .text-theme-atom-one-light .token.method, .text-theme-atom-one-light .token.color, .text-theme-atom-one-light .token.unit, .text-theme-atom-one-light .token.selector .id, .text-theme-atom-one-light .token.selector .class {
   color: #50a14f;
 }
-.text-theme-atom-one-light .hljs-attr,
+.text-theme-atom-one-light .hljs-title,
+.text-theme-atom-one-light .hljs-section,
+.text-theme-atom-one-light .token.maybe-class-name, .text-theme-atom-one-light .token.function-definition {
+  color: #4078f2;
+  font-weight: bold !important;
+}
+.text-theme-atom-one-light .hljs-regexp,
+.text-theme-atom-one-light .hljs-symbol,
 .text-theme-atom-one-light .hljs-variable,
 .text-theme-atom-one-light .hljs-template-variable,
-.text-theme-atom-one-light .hljs-type,
-.text-theme-atom-one-light .hljs-selector-class,
+.text-theme-atom-one-light .hljs-link,
 .text-theme-atom-one-light .hljs-selector-attr,
+.text-theme-atom-one-light .hljs-operator,
 .text-theme-atom-one-light .hljs-selector-pseudo,
-.text-theme-atom-one-light .hljs-number {
+.text-theme-atom-one-light .token.variable, .text-theme-atom-one-light .token.pseudo-class, .text-theme-atom-one-light .token.attr-name {
+  color: #c18401;
+}
+.text-theme-atom-one-light .hljs-literal,
+.text-theme-atom-one-light .token.boolean {
   color: #986801;
 }
-.text-theme-atom-one-light .hljs-symbol,
-.text-theme-atom-one-light .hljs-bullet,
-.text-theme-atom-one-light .hljs-link,
-.text-theme-atom-one-light .hljs-meta,
-.text-theme-atom-one-light .hljs-selector-id,
-.text-theme-atom-one-light .hljs-title {
-  color: #4078f2;
-}
 .text-theme-atom-one-light .hljs-built_in,
-.text-theme-atom-one-light .hljs-title.class_,
-.text-theme-atom-one-light .hljs-class .hljs-title {
-  color: #c18401;
+.text-theme-atom-one-light .hljs-bullet,
+.text-theme-atom-one-light .hljs-code,
+.text-theme-atom-one-light .hljs-addition,
+.text-theme-atom-one-light .token.type, .text-theme-atom-one-light .token.builtin, .text-theme-atom-one-light .token.char, .text-theme-atom-one-light .token.inserted {
+  color: #0184bb;
+}
+.text-theme-atom-one-light .hljs-meta,
+.text-theme-atom-one-light .token.delimiter {
+  color: #a626a4;
+  font-weight: 400 !important;
+}
+.text-theme-atom-one-light .hljs-meta .hljs-string, .text-theme-atom-one-light .token.cdata, .text-theme-atom-one-light .token.doctype, .text-theme-atom-one-light .token.prolog {
+  color: #a626a4;
 }
 .text-theme-atom-one-light .hljs-emphasis {
   font-style: italic;
@@ -1038,72 +1170,99 @@ input:autofill {
 .text-theme-atom-one-light .hljs-strong {
   font-weight: bold;
 }
-.text-theme-atom-one-light .hljs-link {
-  text-decoration: underline;
-}
 
 .text-theme-atom-one-dark .hljs {
-  color: #abb2bf;
-  background: #282c34;
+  background: #F0F0F0;
+  color: #444;
 }
 .text-theme-atom-one-dark .hljs-comment,
-.text-theme-atom-one-dark .hljs-quote {
+.text-theme-atom-one-dark .token.comment {
   color: #5c6370;
-  font-style: italic;
 }
-.text-theme-atom-one-dark .hljs-doctag,
-.text-theme-atom-one-dark .hljs-keyword,
-.text-theme-atom-one-dark .hljs-formula {
-  color: #c678dd;
+.text-theme-atom-one-dark .hljs-tag,
+.text-theme-atom-one-dark .hljs-punctuation,
+.text-theme-atom-one-dark .token.tag, .text-theme-atom-one-dark .token.punctuation, .text-theme-atom-one-dark .token.namespace {
+  font-weight: 400 !important;
+  color: #e06c75;
+  opacity: 1;
 }
-.text-theme-atom-one-dark .hljs-section,
-.text-theme-atom-one-dark .hljs-name,
-.text-theme-atom-one-dark .hljs-selector-tag,
-.text-theme-atom-one-dark .hljs-deletion,
-.text-theme-atom-one-dark .hljs-subst {
+.text-theme-atom-one-dark .token.tag .token.punctuation, .text-theme-atom-one-dark .token.doctype .token.punctuation {
+  font-weight: 400 !important;
+  color: inherit;
+}
+.text-theme-atom-one-dark .hljs-tag .hljs-name,
+.text-theme-atom-one-dark .hljs-tag .hljs-attr,
+.text-theme-atom-one-dark .token.tag .token.attr-name {
+  font-weight: normal;
   color: #e06c75;
 }
-.text-theme-atom-one-dark .hljs-literal {
-  color: #56b6c2;
+.text-theme-atom-one-dark .token.operator, .text-theme-atom-one-dark .token.url, .text-theme-atom-one-dark .token.selector {
+  color: var(--main-color);
 }
-.text-theme-atom-one-dark .hljs-string,
-.text-theme-atom-one-dark .hljs-regexp,
-.text-theme-atom-one-dark .hljs-addition,
+.text-theme-atom-one-dark .token.keyword, .text-theme-atom-one-dark .token.property, .text-theme-atom-one-dark .token.punctuation, .text-theme-atom-one-dark .token.atrule {
+  color: var(--main-color);
+  font-weight: bold;
+}
+.text-theme-atom-one-dark .hljs-keyword,
 .text-theme-atom-one-dark .hljs-attribute,
-.text-theme-atom-one-dark .hljs-meta .hljs-string {
+.text-theme-atom-one-dark .hljs-selector-tag,
+.text-theme-atom-one-dark .hljs-meta .hljs-keyword,
+.text-theme-atom-one-dark .hljs-doctag,
+.text-theme-atom-one-dark .hljs-name, .text-theme-atom-one-dark .token.tag {
+  font-weight: bold;
+}
+.text-theme-atom-one-dark .hljs-type,
+.text-theme-atom-one-dark .hljs-string,
+.text-theme-atom-one-dark .hljs-number,
+.text-theme-atom-one-dark .hljs-selector-id,
+.text-theme-atom-one-dark .hljs-selector-class,
+.text-theme-atom-one-dark .hljs-quote,
+.text-theme-atom-one-dark .hljs-template-tag,
+.text-theme-atom-one-dark .hljs-deletion,
+.text-theme-atom-one-dark .token.attr-value, .text-theme-atom-one-dark .token.constant, .text-theme-atom-one-dark .token.number, .text-theme-atom-one-dark .token.symbol, .text-theme-atom-one-dark .token.function-definition, .text-theme-atom-one-dark .token.string, .text-theme-atom-one-dark .token.method, .text-theme-atom-one-dark .token.color, .text-theme-atom-one-dark .token.unit, .text-theme-atom-one-dark .token.selector .id, .text-theme-atom-one-dark .token.selector .class {
   color: #98c379;
 }
-.text-theme-atom-one-dark .hljs-attr,
+.text-theme-atom-one-dark .hljs-title,
+.text-theme-atom-one-dark .hljs-section,
+.text-theme-atom-one-dark .token.maybe-class-name, .text-theme-atom-one-dark .token.function-definition {
+  color: #61aeee;
+  font-weight: bold !important;
+}
+.text-theme-atom-one-dark .hljs-regexp,
+.text-theme-atom-one-dark .hljs-symbol,
 .text-theme-atom-one-dark .hljs-variable,
 .text-theme-atom-one-dark .hljs-template-variable,
-.text-theme-atom-one-dark .hljs-type,
-.text-theme-atom-one-dark .hljs-selector-class,
+.text-theme-atom-one-dark .hljs-link,
 .text-theme-atom-one-dark .hljs-selector-attr,
+.text-theme-atom-one-dark .hljs-operator,
 .text-theme-atom-one-dark .hljs-selector-pseudo,
-.text-theme-atom-one-dark .hljs-number {
+.text-theme-atom-one-dark .token.variable, .text-theme-atom-one-dark .token.pseudo-class, .text-theme-atom-one-dark .token.attr-name {
+  color: #e6c07b;
+}
+.text-theme-atom-one-dark .hljs-literal,
+.text-theme-atom-one-dark .token.boolean {
   color: #d19a66;
 }
-.text-theme-atom-one-dark .hljs-symbol,
+.text-theme-atom-one-dark .hljs-built_in,
 .text-theme-atom-one-dark .hljs-bullet,
-.text-theme-atom-one-dark .hljs-link,
-.text-theme-atom-one-dark .hljs-meta,
-.text-theme-atom-one-dark .hljs-selector-id,
-.text-theme-atom-one-dark .hljs-title {
+.text-theme-atom-one-dark .hljs-code,
+.text-theme-atom-one-dark .hljs-addition,
+.text-theme-atom-one-dark .token.type, .text-theme-atom-one-dark .token.builtin, .text-theme-atom-one-dark .token.char, .text-theme-atom-one-dark .token.inserted {
   color: #61aeee;
 }
-.text-theme-atom-one-dark .hljs-built_in,
-.text-theme-atom-one-dark .hljs-title.class_,
-.text-theme-atom-one-dark .hljs-class .hljs-title {
-  color: #e6c07b;
+.text-theme-atom-one-dark .hljs-meta,
+.text-theme-atom-one-dark .token.delimiter {
+  color: #c678dd;
+  font-weight: 400 !important;
+}
+.text-theme-atom-one-dark .hljs-meta .hljs-string, .text-theme-atom-one-dark .token.cdata, .text-theme-atom-one-dark .token.doctype, .text-theme-atom-one-dark .token.prolog {
+  color: #c678dd;
 }
 .text-theme-atom-one-dark .hljs-emphasis {
   font-style: italic;
 }
 .text-theme-atom-one-dark .hljs-strong {
   font-weight: bold;
-}
-.text-theme-atom-one-dark .hljs-link {
-  text-decoration: underline;
 }
 
 .text-theme-vs-code .hljs {
@@ -1182,6 +1341,165 @@ input:autofill {
 .text-theme-vs-code .hljs-emphasis {
   font-style: italic;
 }
+.text-theme-vs-code .hljs-comment,
+.text-theme-vs-code .token.comment {
+  color: #007400;
+}
+.text-theme-vs-code .hljs-tag,
+.text-theme-vs-code .hljs-punctuation,
+.text-theme-vs-code .token.tag, .text-theme-vs-code .token.punctuation, .text-theme-vs-code .token.namespace {
+  font-weight: 400 !important;
+  color: #aa0d91;
+  opacity: 1;
+}
+.text-theme-vs-code .token.tag .token.punctuation, .text-theme-vs-code .token.doctype .token.punctuation {
+  font-weight: 400 !important;
+  color: inherit;
+}
+.text-theme-vs-code .hljs-tag .hljs-name,
+.text-theme-vs-code .hljs-tag .hljs-attr,
+.text-theme-vs-code .token.tag .token.attr-name {
+  font-weight: normal;
+  color: #aa0d91;
+}
+.text-theme-vs-code .token.operator, .text-theme-vs-code .token.url, .text-theme-vs-code .token.selector {
+  color: var(--main-color);
+}
+.text-theme-vs-code .token.keyword, .text-theme-vs-code .token.property, .text-theme-vs-code .token.punctuation, .text-theme-vs-code .token.atrule {
+  color: var(--main-color);
+  font-weight: bold;
+}
+.text-theme-vs-code .hljs-keyword,
+.text-theme-vs-code .hljs-attribute,
+.text-theme-vs-code .hljs-selector-tag,
+.text-theme-vs-code .hljs-meta .hljs-keyword,
+.text-theme-vs-code .hljs-doctag,
+.text-theme-vs-code .hljs-name, .text-theme-vs-code .token.tag {
+  font-weight: bold;
+}
+.text-theme-vs-code .hljs-type,
+.text-theme-vs-code .hljs-string,
+.text-theme-vs-code .hljs-number,
+.text-theme-vs-code .hljs-selector-id,
+.text-theme-vs-code .hljs-selector-class,
+.text-theme-vs-code .hljs-quote,
+.text-theme-vs-code .hljs-template-tag,
+.text-theme-vs-code .hljs-deletion,
+.text-theme-vs-code .token.attr-value, .text-theme-vs-code .token.constant, .text-theme-vs-code .token.number, .text-theme-vs-code .token.symbol, .text-theme-vs-code .token.function-definition, .text-theme-vs-code .token.string, .text-theme-vs-code .token.method, .text-theme-vs-code .token.color, .text-theme-vs-code .token.unit, .text-theme-vs-code .token.selector .id, .text-theme-vs-code .token.selector .class {
+  color: #c41a16;
+}
+.text-theme-vs-code .hljs-title,
+.text-theme-vs-code .hljs-section,
+.text-theme-vs-code .token.maybe-class-name, .text-theme-vs-code .token.function-definition {
+  color: #4078f2;
+  font-weight: bold !important;
+}
+.text-theme-vs-code .hljs-regexp,
+.text-theme-vs-code .hljs-symbol,
+.text-theme-vs-code .hljs-variable,
+.text-theme-vs-code .hljs-template-variable,
+.text-theme-vs-code .hljs-link,
+.text-theme-vs-code .hljs-selector-attr,
+.text-theme-vs-code .hljs-operator,
+.text-theme-vs-code .hljs-selector-pseudo,
+.text-theme-vs-code .token.variable, .text-theme-vs-code .token.pseudo-class, .text-theme-vs-code .token.attr-name {
+  color: #3F6E74;
+}
+.text-theme-vs-code .hljs-literal,
+.text-theme-vs-code .token.boolean {
+  color: #1c00cf;
+}
+.text-theme-vs-code .hljs-built_in,
+.text-theme-vs-code .hljs-bullet,
+.text-theme-vs-code .hljs-code,
+.text-theme-vs-code .hljs-addition,
+.text-theme-vs-code .token.type, .text-theme-vs-code .token.builtin, .text-theme-vs-code .token.char, .text-theme-vs-code .token.inserted {
+  color: #5c2699;
+}
+.text-theme-vs-code .hljs-meta,
+.text-theme-vs-code .token.delimiter {
+  color: #643820;
+  font-weight: 400 !important;
+}
+.text-theme-vs-code .hljs-meta .hljs-string, .text-theme-vs-code .token.cdata, .text-theme-vs-code .token.doctype, .text-theme-vs-code .token.prolog {
+  color: #643820;
+}
+.text-theme-vs-code .hljs-emphasis {
+  font-style: italic;
+}
+.text-theme-vs-code .hljs-strong {
+  font-weight: bold;
+}
+
+input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: var(--main-color);
+  border-radius: 0.25rem;
+}
+
+input[type=checkbox]:hover ~ .checkmark {
+  background-color: var(--secondary-color);
+}
+
+input[type=checkbox]:checked ~ .checkmark {
+  background-color: var(--main-ovca);
+}
+
+input[type=checkbox]:hover:checked ~ .checkmark {
+  background-color: var(--secondary-ovca);
+}
+
+input[type=checkbox]:disabled {
+  pointer-events: none !important;
+}
+
+input[type=checkbox]:disabled ~ .checkmark {
+  filter: opacity(0.5) !important;
+  pointer-events: none !important;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+input[type=checkbox]:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.checkbox-container {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  font-size: 22px;
+  user-select: none;
+}
 
 html {
   min-height: 100vh;
@@ -1217,6 +1535,7 @@ nav > div:last-child {
   flex-grow: 1;
   display: flex;
   justify-content: space-between;
+  flex-direction: row-reverse;
 }
 
 input[type=checkbox] {

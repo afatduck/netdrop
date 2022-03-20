@@ -46,6 +46,11 @@ export const ImageView = (props: { name: string }) => {
 
   }
 
+  const handleError = () => {
+    updateError("Something went wrong.")
+    setView(0)
+  }
+
   return (
     <div>
       <button type="button" className="button-clear" onClick={handleClick}>View</button>
@@ -55,7 +60,10 @@ export const ImageView = (props: { name: string }) => {
             <div className="hold-view">
               <i className="fas fa-times" onClick={() => { setView(0) }} />
               {view != 3 ? <div className="loader" /> : null}
-              {view >= 2 ? <img src={globalThis.apiLocation + imgUrl} style={{ display: view == 3 ? "block" : "none" }} onLoad={() => { setView(3) }} /> : null}
+              {view >= 2 ? <img src={globalThis.apiLocation + imgUrl} 
+              style={{ display: view == 3 ? "block" : "none" }} 
+              onLoad={() => { setView(3) } }
+              onError={handleError} /> : null}
             </div>
           </div>
       }

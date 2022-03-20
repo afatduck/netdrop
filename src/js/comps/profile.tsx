@@ -65,8 +65,8 @@ export const ProfileOverlay = () => {
       let cred: Credentials = user.credentials[i]
       savedCredentials.push(
         <div data-id={i} onClick={handleDropdown}>
-          <p style={{ lineHeight: 0 }}>{cred.name}</p>
-          <p style={{ fontSize: "50%", lineHeight: 0 }}>{cred.host}</p>
+          <p>{cred.name}</p>
+          <p>{cred.host}</p>
         </div>
       )
     }

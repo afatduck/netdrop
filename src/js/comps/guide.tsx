@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
 import guidePages from '../json/guide.json'
 
@@ -7,11 +8,12 @@ const guideState: GuideState = guideSaved == "done" ? "done" : parseInt(guideSav
 
 export const GuideButton = () => {
 
+  const guideConsent = useSelector((state: RootState) => state.globals.consent.states)
   const [state, setState]: [GuideState, React.Dispatch<React.SetStateAction<GuideState>>] = useState(guideState)
 
   useEffect(() => {
 
-    localStorage.setItem("guide", state.toString())
+    if (guideConsent) localStorage.setItem("guide", state.toString())
 
     $('.guide-highligh').removeClass("guide-highligh")
 
@@ -22,6 +24,15 @@ export const GuideButton = () => {
     $(guidePages[state].highlight).addClass("guide-highligh")
 
   }, [state])
+
+  useEffect(() => {
+    for (const g of guidePages) {
+      if (g.image) {
+        const loader = new Image()
+        loader.src = `static/guide/${g.image}`
+      }
+    }
+  }, [])
 
   const p = state == "done" ? null : guidePages[state]
 

@@ -19,6 +19,7 @@
 #add-tab
   align-items: center
   display: flex
+  flex-wrap: wrap
 
   .button-small
     align-self: flex-end
@@ -48,21 +49,10 @@
     margin-bottom: 1rem
     min-width: 12vw
 
-  button:not(.hold-buttons button)
+  button:not(.hold-buttons button, [id$="inner"] button)
     width: 100%
     border-radius: 0
     display: block
-
-#dev-buttons
-  position: absolute
-  bottom: 1rem
-  left: 1rem
-  button
-    display: block
-  button:last-child
-    margin-top: 1rem
-  p
-    margin: 0
 
 #dir-root
   margin-top: 5vw
@@ -103,3 +93,7 @@
 
 #username span
   cursor: pointer
+
+#delete-inner em
+  filter: opacity(.8)
+  font-weight: 100

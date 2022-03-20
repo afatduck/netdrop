@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { bindActionCreators } from 'redux'
 import hljs from 'highlight.js'
+import CodeEditor from '@uiw/react-textarea-code-editor';
 
 import { getBaseFtpRequest } from '../utils'
 import text_themes from '../json/textThemes.json'
@@ -21,12 +22,14 @@ export const TextView = (props: { name: string }) => {
   const [selected, setSelected]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(text_themes.filter((e) => e.id == (localStorage.getItem('text-theme') || "default"))[0].name)
   const [r, reRender]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(0)
 
-  const highlight: React.MutableRefObject<boolean> = useRef(localStorage.getItem("highligh") != "no")
+  const highlight: React.MutableRefObject<boolean> = useRef(localStorage.getItem("highlight") != "no")
   const smthNew: React.MutableRefObject<boolean> = useRef(false)
+  const ctrl: React.MutableRefObject<boolean> = useRef(false)
+  const lang: React.MutableRefObject<string> = useRef("")
 
   const { name } = props
 
-  const { path } = useSelector((state: RootState) => state)
+  const { path, globals } = useSelector((state: RootState) => state)
   const dispatch = useDispatch()
   const { updateError, updateLevel } = bindActionCreators(ActionCreators, dispatch)
 
@@ -75,14 +78,14 @@ export const TextView = (props: { name: string }) => {
 
   const handleHighlight = () => {
     highlight.current = !highlight.current
-    localStorage.setItem("highligh", highlight.current ? "yes" : "no")
+    if (globals.consent.states) localStorage.setItem("highlight", highlight.current ? "yes" : "no")
     reRender((p) => p + 1)
   }
 
   const handleDropdown = (e: React.MouseEvent<HTMLDivElement>) => {
     const key: string = e.currentTarget.getAttribute("data-id")
     setSelected(text_themes.filter((e) => e.id == key)[0].name)
-    localStorage.setItem("text-theme", key)
+    if (globals.consent.states) localStorage.setItem("text-theme", key)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -100,8 +103,7 @@ export const TextView = (props: { name: string }) => {
     setNewtext(text)
   }
 
-  const handleSave = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
+  const saveText = () => {
     setLoading(true)
     $.ajax({
       url: globalThis.apiLocation + "textsave",
@@ -129,8 +131,37 @@ export const TextView = (props: { name: string }) => {
       .always(() => { setLoading(false) })
   }
 
+  const handleSave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    saveText()
+  }
+
+  const handleCrtlS = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.keyCode == 17) {
+      e.preventDefault();
+      ctrl.current = true;
+    }
+
+    if (e.keyCode == 83 && ctrl.current){
+      e.preventDefault();
+      if (text == newtext) {
+        setEdit(false)
+        setNewtext(text)
+        return
+      }
+      saveText()
+    }
+  }
+
   useEffect(() => {
-    if (highlight.current) { hljs.highlightAll() }
+    if (highlight.current && !edit) { 
+      hljs.highlightAll()
+      try {
+        lang.current = $(".hold-text code")[0].classList[1].replace("language-", "").replace(/-.+/, "");
+      } catch (error) {
+        lang.current = ""
+      }
+    }
   }, [text, r, edit])
 
   useEffect(() => {
@@ -159,7 +190,7 @@ export const TextView = (props: { name: string }) => {
                   <div className="loader" /> :
                   <div className="hold-text">
                     <div className="hold-buttons">
-                      <button type="button" className="button-small" onClick={handleHighlight} disabled={edit}>{highlight.current ? "Disable" : "Enable"} highligh</button>
+                      <button type="button" className="button-small" onClick={handleHighlight} disabled={edit}>{highlight.current ? "Disable" : "Enable"} highlight</button>
                       <button type="button" className="dropdown button-small" disabled={edit} onClick={() => { setDropdown(!dropdown) }}>
                         {selected}
                         <i className={`fas fa-angle-${dropdown ? "down" : "up"} mt-1`} />
@@ -167,17 +198,27 @@ export const TextView = (props: { name: string }) => {
                       </button>
                       {
                         !edit ?
-                          <button type="button" className="button-small button-highligh ml-auto" onClick={handleEdit}>Edit</button> :
+                          <button type="button" className="button-small button-highlight ml-auto" onClick={handleEdit}>Edit</button> :
                           loading ? <div className="loader ml-auto mr-5" /> :
                             <div style={{ display: 'flex' }} className="ml-auto">
                               <button type="button" className="button-small" onClick={handleDiscard}>Discard</button>
-                              <button type="button" className="button-small button-highligh" disabled={text == newtext} onClick={handleSave}>Save</button>
+                              <button type="button" className="button-small button-highlight" disabled={text == newtext} onClick={handleSave}>Save</button>
                             </div>
                       }
                     </div>
                     {
                       edit ?
-                        <textarea value={newtext} onChange={handleChange} /> :
+                      <div id="hold-editor" className={"text-theme-" + text_themes.filter((e) => e.name == selected)[0].id}>
+                        <CodeEditor value={newtext} 
+                        onChange={handleChange}
+                        onKeyDown={handleCrtlS}
+                        onKeyUp={() => {ctrl.current = false}}
+                        language={lang.current}
+                        style={{
+                          fontSize: "86%",
+                          backgroundColor: "var(--secondary-bg-color)",
+                          fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                        }} /> </div>:
                         <pre className={"text-theme-" + text_themes.filter((e) => e.name == selected)[0].id}>
                           <code key={r}>
                             {text}

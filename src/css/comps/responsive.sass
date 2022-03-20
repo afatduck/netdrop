@@ -23,7 +23,7 @@
         margin: 2rem 0
 
   .overlay, #tab-overlay
-    form, #add-inner, #profile, #guide-inner
+    form, #profile, [id$="-inner"]
       width: 60%
 
 /* Landscape phone to portrait tablet */
@@ -40,7 +40,7 @@
     padding-bottom: 5vh
 
   .overlay, #tab-overlay
-    form, #add-inner, #profile, #guide-inner
+    form, #profile, [id$="-inner"]
       width: 80%
 
   button
@@ -80,12 +80,12 @@
     padding-bottom: 10vh
 
   .overlay, #tab-overlay
-    form, #add-inner, #profile, #guide-inner
+    form, #profile, [id$="-inner"]
       width: 90%
 
   nav > div:last-child
     width: 100%
-    flex-direction: column
+    flex-direction: column !important
     align-items: flex-end
 
     & > *:last-child

@@ -70,7 +70,7 @@ export const AccountForm = (props: { close: React.Dispatch<React.SetStateAction<
           localStorage.setItem("logged-in", 'true')
           return
         }
-        setError(response.errors[0])
+        setError(response.errors.join("\n"))
       })
       .fail(() => {
         updateLevel("CONNECTING")
@@ -84,11 +84,11 @@ export const AccountForm = (props: { close: React.Dispatch<React.SetStateAction<
         <i className="fas fa-times" onClick={() => { props.close(false) }} />
         <div>
           <label htmlFor="account_username_input">Username:</label>
-          <input type="text" name="user" placeholder="Username" id="account_user_input" value={input.user} onChange={handleChange} />
+          <input type="text" name="user" placeholder="Username" id="account_user_input" autoComplete="username" value={input.user} onChange={handleChange} />
         </div>
         <div>
           <label htmlFor="account_password_input">Password:</label>
-          <input type="password" name="password" placeholder="Password" id="account_password_input" value={input.password} onChange={handleChange} />
+          <input type="password" name="password" placeholder="Password" id="account_password_input" autoComplete="password" value={input.password} onChange={handleChange} />
         </div>
         {action == "Sign In" ?
           null :

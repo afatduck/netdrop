@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import * as ActionCreators from '../actions'
+import { listdir } from './listdir'
 
 export const ContactApi = () => {
+
+  const credsConsent = useSelector((state: RootState) => state.globals.consent.creds)
 
   const dispatch = useDispatch()
   const { updateLevel } = bindActionCreators(ActionCreators, dispatch)
@@ -21,8 +24,26 @@ export const ContactApi = () => {
       .fail(() => {
         setLoading(false)
       })
-      .done(() => {
+      .done((data: ContactResponse) => {
         updateLevel('USING')
+        if (data.connectionFound) {
+
+          if (credsConsent) {
+            localStorage.setItem('user', data.username)
+            localStorage.setItem('host', data.host)
+            localStorage.setItem('secure', data.secure ? "true" : "false")
+            localStorage.setItem('port', data.port.toString())
+          }
+
+          globalThis.ftpHost = data.host
+          globalThis.ftpUser = data.username 
+          globalThis.ftpPassword = data.password
+          globalThis.ftpSecure = data.secure
+          globalThis.ftpPort = data.port
+          
+          listdir(undefined, true)
+        }
+        if (sessionStorage.getItem("connection")) listdir(undefined, true)
       })
   }
 
@@ -34,12 +55,12 @@ export const ContactApi = () => {
 
   return (
     <div className="text-center center" id="contact">
-      <h3>{loading ? "Connecting to Netdrop API..." : "Failed to connect to Netdrop API."}</h3>
+      <h3>{loading ? "Connecting to Netdrop..." : "Failed to connect to Netdrop."}</h3>
       {loading ?
         <div className="loader center mt-5" />
         :
         <div>
-          <p>In order to use Netdrop it must connect to its API, the connection is likely failing due to one of the following resons:</p>
+          <p>In order to use Netdrop it must connect to its API, the connection is likely failing due to one of the following reasons:</p>
           <ul>
             <li>The app is still in development so the API isn't always avaliable.</li>
             <li>You don't have internet access.</li>

@@ -7,6 +7,7 @@ import * as ActionCreators from '../actions'
 export const LoginForm = () => {
 
   const userData = useSelector((state: RootState) => state.globals.user)
+  const consent = useSelector((state: RootState) => state.globals.consent)
 
   const dispatch = useDispatch()
   const { updateLevel, updateCdir, updatePath, updateItemMenu } = bindActionCreators(ActionCreators, dispatch)
@@ -29,9 +30,10 @@ export const LoginForm = () => {
   const checkIfDifferent = () => {
     if (!userData) { return false }
     for (let cred of userData.credentials) {
-      if (cred.host == input.host && cred.password == input.password && cred.username == input.user && input.port == cred.port.toString()) {
-        return false
-      }
+      if (cred.host == globalThis.ftpHost &&
+         cred.password == globalThis.ftpPassword && 
+         cred.username == globalThis.ftpUser && 
+         cred.port == globalThis.ftpPort) return false
     }
     return true
   }
@@ -74,8 +76,8 @@ export const LoginForm = () => {
       let cred: Credentials = userData.credentials[i]
       savedCredentials.push(
         <div data-id={i} onClick={handleDropdown}>
-          <p style={{ lineHeight: 0 }}>{cred.name}</p>
-          <p style={{ fontSize: "50%", lineHeight: 0 }}>{cred.host}</p>
+          <p>{cred.name}</p>
+          <p>{cred.host}</p>
         </div>
       )
     }
@@ -83,7 +85,10 @@ export const LoginForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
+    if (loading) return
+
     let { value, name, checked } = e.target
+    name = name.substr(3)
 
     setInput((prev: creds) => {
       if (name == "secure" && (input.port == "21" || input.port == "990")) { prev.port = checked ? "990" : "21" }
@@ -113,7 +118,9 @@ export const LoginForm = () => {
         Password: input.password,
         Secure: input.secure,
         Port: parseInt(input.port),
-        Path: "/"
+        Path: "/",
+        New: true,
+        Save: consent.connectionCookie
       })
     })
       .fail(() => {
@@ -128,11 +135,22 @@ export const LoginForm = () => {
         setError('')
         updateCdir(data.dirList)
         updatePath(-1)
-        localStorage.setItem('user', input.user)
-        localStorage.setItem('host', input.host)
-        localStorage.setItem('secure', input.secure ? "true" : "false")
-        localStorage.setItem('port', input.port)
+
+        if (consent.creds) {
+          localStorage.setItem('user', input.user)
+          localStorage.setItem('host', input.host)
+          localStorage.setItem('secure', input.secure ? "true" : "false")
+          localStorage.setItem('port', input.port)
+        }
+
+        globalThis.ftpHost = input.host
+        globalThis.ftpUser = input.user 
         globalThis.ftpPassword = input.password
+        globalThis.ftpSecure = input.secure
+        globalThis.ftpPort = parseInt(input.port)
+
+       if (consent.connectionSession) sessionStorage.setItem("connection", data.connection)
+
         if (checkIfDifferent()) {
           setSave(true)
           return
@@ -212,27 +230,61 @@ export const LoginForm = () => {
           <div className="overlay">
             {!save ?
 
-              <form className="bg-white d-flex flex-column" onSubmit={handleSubmit}>
+              <form className="bg-white d-flex flex-column" autoComplete="off" onSubmit={handleSubmit}>
                 <i className="fas fa-times" onClick={() => { setForm(false) }} />
 
-                <div className="">
+                <div>
                   <label htmlFor="ftp_host_input">Host:</label>
-                  <input type="text" className="" name="host" placeholder="Host" id="ftp_host_input" autoComplete="ftphost" value={input.host} onChange={handleChange} />
+                  <input type="text"
+                    name="ftphost"
+                    placeholder="Host"
+                    id="ftp_host_input"
+                    value={input.host}
+                    onChange={handleChange} />
                 </div>
-                <div className="">
-                  <label htmlFor="ftp_user_input">Username:</label>
-                  <input type="text" className="" name="user" placeholder="Username" id="ftp_user_input" autoComplete="ftpuser" value={input.user} onChange={handleChange} />
+
+                <div>
+                  <label htmlFor="ftp_user_input">User:</label>
+                  <input type="text"
+                    name="ftpuser"
+                    placeholder="User"
+                    id="ftp_user_input"
+                    value={input.user}
+                    onChange={handleChange}
+                    readOnly
+                    onBlur={e => e.currentTarget.setAttribute("readOnly", "")}
+                    onFocus={e => e.currentTarget.removeAttribute("readOnly")} />
                 </div>
-                <div className="">
+
+                <div>
                   <label htmlFor="ftp_password_input">Password:</label>
-                  <input type="password" className="" name="password" placeholder="Password" id="ftp_password_input" autoComplete="ftppassword" value={input.password} onChange={handleChange} />
+                  <input type="password"
+                    name="ftppassword"
+                    placeholder="Password"
+                    id="ftp_password_input"
+                    autoComplete="off"
+                    value={input.password}
+                    onChange={handleChange}
+                    readOnly
+                    onBlur={e => e.currentTarget.setAttribute("readOnly", "")}
+                    onFocus={e => e.currentTarget.removeAttribute("readOnly")} />
                 </div>
+
                 <div style={{ width: "25%" }}>
                   <label htmlFor="ftp_port_input">Port:</label>
-                  <input type="number" className="form-control" name="port" placeholder="Port" id="ftp_port_input" autoComplete="ftpport" value={input.port} onChange={handleChange} />
+                  <input type="number"
+                    name="ftpport"
+                    placeholder="Port"
+                    id="ftp_port_input"
+                    value={input.port}
+                    onChange={handleChange} />
                 </div>
-                <label className="" htmlFor="ftp_secure_check" style={{ display: 'inline-block', width: "fit-content" }}>Implicit FTPS
-                  <input type="checkbox" className="m-2" name="secure" id="ftp_secure_check" checked={input.secure} onChange={handleChange} />
+
+                <label htmlFor="ftp_secure_check" style={{ display: 'flex', width: "fit-content" }}>Implicit FTPS
+                  <span className='checkbox-container ml-5'>
+                    <input type="checkbox" className="m-2" name="ftpsecure" id="ftp_secure_check" checked={input.secure} onChange={handleChange} />
+                    <span className='checkmark' />
+                  </span>
                 </label>
 
                 {
@@ -258,7 +310,7 @@ export const LoginForm = () => {
                 <h2>Save connection?</h2>
                 <div>
                   <label htmlFor="ftp_save_input">Connection Name:</label>
-                  <input type="text" name="name" placeholder="Connection Name" id="ftp_name_input" autoComplete="ftpname" value={saveName} onChange={handleSaveChange} />
+                  <input type="text" name="name" placeholder="Connection Name" id="ftp_name_input" value={saveName} onChange={handleSaveChange} />
                 </div>
                 <p className="text-error">{error}</p>
                 {

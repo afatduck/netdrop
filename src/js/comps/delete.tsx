@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
@@ -15,8 +15,11 @@ export const DeleteItem = (props: { name: string, setLoading: React.Dispatch<Rea
   const dispatch = useDispatch()
   const { updateError, updateCdir, updateLevel, updateItemMenu } = bindActionCreators(ActionCreators, dispatch)
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const [confirm, setConfim]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
+
+  const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
+    setConfim(false)
     setLoading(true)
     $.ajax({
       type: "POST",
@@ -43,6 +46,31 @@ export const DeleteItem = (props: { name: string, setLoading: React.Dispatch<Rea
       })
   }
 
-  return <button type="button" className="button-clear" name="delete" onClick={handleClick}>Delete</button>
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    setConfim(true)
+  }
+
+  const handleNo = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    setConfim(false)
+  }
+
+  return <>
+  <button type="button" className="button-clear" name="delete" onClick={handleClick}>Delete</button>
+  {
+    !confirm ? null :
+    <div className="overlay">
+      <div id='delete-inner'>
+        <i className="fas fa-times" onClick={() => { setConfim(false) }} />
+        <h3>Are you sure you want to delete <em>{name}</em></h3>
+        <div className='buttons'>
+          <button type='button' name='yes' className='button-highlight' onClick={handleConfirm}>Yes</button>
+          <button type='button' name='no' onClick={handleNo}>no</button>
+        </div>
+      </div>
+    </div>
+  }
+  </>
 
 }

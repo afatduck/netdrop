@@ -1,10 +1,11 @@
-type states = "CONNECTING" | "USING"
+type states = "CONNECTING" | "USING" | "NOCONSENT"
 
 type globals = {
   error: string
   state: states
   user: UserData
   request: boolean
+  consent: CookieConsentInterface
 }
 
 type RootState = {
@@ -26,7 +27,7 @@ type creds = {
 
 type directory = {
   name: string
-  modify: string
+  modify: number
   size: string
   type: 'file' | 'dir'
   mime: string
@@ -72,51 +73,6 @@ type ProfileRequests = "DEL" | "CUN" | "CPW"
 
 type GuideState = number | "done"
 
-interface BaseResponse {
-  result: boolean
-  errors: string[]
-}
-
-interface LoginResponse extends BaseResponse {
-  userData: UserData
-}
-
-interface ListDirRespone extends BaseResponse {
-  dirList: directory[]
-}
-
-interface DownloadFileResponse extends BaseResponse {
-  url: string
-  mime: string
-  size: number
-}
-
-interface ProgressResponse extends BaseResponse {
-  done: number
-  speed: number
-  complete: boolean
-}
-
-interface UploadResponse extends BaseResponse {
-  code: string
-}
-
-interface ViewResponse extends BaseResponse {
-  url: string
-}
-
-interface Files extends File {
-  path: string
-}
-
-interface BaseFtpRequest {
-  Host: string
-  Username: string
-  Password: string
-  Secure: boolean
-  Port: number
-}
-
 interface itemMenu {
   x: number
   y: number
@@ -131,4 +87,22 @@ interface TextTheme {
 interface ProfileInput {
   new: string
   cpwd: string
+}
+
+interface Files extends File {
+  path: string
+}
+
+interface CookieConsentInterface {
+  consent: boolean
+  states: boolean
+  creds: boolean
+  connectionSession: boolean
+  connectionCookie: boolean
+  jwtCookie: boolean
+}
+
+interface ConsentMap {
+  key: string,
+  value: boolean
 }
